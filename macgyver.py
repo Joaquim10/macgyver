@@ -44,6 +44,11 @@ class Maze:
         except Exception as error:
             print("Unexpected error : {} ".format(error))
 
+    @classmethod
+    def free_paths(cls):
+        return [coordinates for coordinates in cls.ZONES if cls.ZONES[coordinates] ==
+            cls.STRUCTURE_PATH]
+
 
 class MacGyver:
 
