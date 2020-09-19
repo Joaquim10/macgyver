@@ -12,3 +12,15 @@ class Maze:
     STRUCTURE_PATH = "Path"
     STRUCTURE_START = "MacGyver"
     STRUCTURE_EXIT = "Guardian"
+
+
+class MacGyver:
+
+    def __init__(self, position):
+        self.position = position
+
+
+class Guardian:
+
+    def __init__(self, position):
+        self.position = position
