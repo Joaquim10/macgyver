@@ -45,6 +45,14 @@ class Maze:
             print("Unexpected error : {} ".format(error))
 
     @classmethod
+    def location(cls, structure):
+        for coordinates in cls.ZONES:
+            if cls.ZONES[coordinates] == structure:
+                location = coordinates
+                break
+        return location
+
+    @classmethod
     def free_paths(cls):
         return [coordinates for coordinates in cls.ZONES if cls.ZONES[coordinates] ==
             cls.STRUCTURE_PATH]
@@ -67,3 +75,15 @@ class Item:
     def __init__(self, name, position):
         self.name = name
         self.position = position
+
+
+class GameScript:
+
+    def __init__(self):
+        Maze.init_zones()
+        self.macgyver = MacGyver(Maze.location(Maze.STRUCTURE_START))
+        self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
+        self.free_paths = Maze.free_paths()
+
+if __name__ == "__main__":
+    game_script = GameScript()
