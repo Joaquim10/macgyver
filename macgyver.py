@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import os
+import random
 
 
 class Maze:
@@ -57,6 +58,16 @@ class Maze:
         return [coordinates for coordinates in cls.ZONES if cls.ZONES[coordinates] ==
             cls.STRUCTURE_PATH]
 
+    @classmethod
+    def random_location(cls, locations):
+        free_location = False
+        while not free_location:
+            coordinates = (random.randrange(cls.MIN_WIDTH, cls.MAX_WIDTH),
+            random.randrange(cls.MIN_HEIGHT, cls.MAX_HEIGHT))
+            if coordinates in locations:
+                free_location = True
+        return coordinates
+
 
 class MacGyver:
 
@@ -84,6 +95,14 @@ class GameScript:
         self.macgyver = MacGyver(Maze.location(Maze.STRUCTURE_START))
         self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
         self.free_paths = Maze.free_paths()
+
+        # Drop items on random free pathes
+        self.loot = []
+        for item_name in ["needle", "tube", "ether"]:
+            location = Maze.random_location(self.free_paths)
+            self.loot.append(Item(item_name, location))
+            self.free_paths.remove(location)
+
 
 if __name__ == "__main__":
     game_script = GameScript()
