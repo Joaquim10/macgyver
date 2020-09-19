@@ -60,3 +60,10 @@ class Guardian:
 
     def __init__(self, position):
         self.position = position
+
+
+class Item:
+
+    def __init__(self, name, position):
+        self.name = name
+        self.position = position
