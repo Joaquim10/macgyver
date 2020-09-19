@@ -81,6 +81,9 @@ class MacGyver:
     def pick_up_item(self):
         self.items_in_backpack += 1
 
+    def craft_item(self):
+        return self.items_in_backpack >= 3
+
 
 class Guardian:
 
