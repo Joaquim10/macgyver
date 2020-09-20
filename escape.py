@@ -5,11 +5,11 @@ from maze import Maze
 from macgyver import MacGyver
 from guardian import Guardian
 from item import Item
-from output_engine import OutputEngine
-from input_engine import InputEngine
+from output import Output
+from controller import Controller
 
 
-class GameEngine:
+class Game:
 
     ENDINGS = {
         "game won" :
@@ -68,15 +68,15 @@ class GameEngine:
 
     def play_game(self):
         while self.game_status == "game in progress":
-            OutputEngine.print_interface(self.macgyver, self.loot,
+            Output.print_interface(self.macgyver, self.loot,
                 self.backpack)
-            command = InputEngine.command("Direction ? ")
-            if InputEngine.is_move(command):
+            command = Controller.command("Direction ? ")
+            if Controller.is_move(command):
                 self.handle_actions(command)
             elif command == "exit":
                 self.game_status = "game canceled"
-        OutputEngine.print_ending(self.ENDINGS[self.game_status])
+        Output.print_ending(self.ENDINGS[self.game_status])
 
 if __name__ == "__main__":
-    game_engine = GameEngine()
-    game_engine.play_game()
+    game = Game()
+    game.play_game()

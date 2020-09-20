@@ -5,10 +5,10 @@ import os
 from maze import Maze
 
 
-class OutputEngine:
+class Output:
 
     @staticmethod
-    def clear_console():
+    def _clear_console():
         if os.name in ('nt','dos'):
             os.system("cls")
         elif os.name in ('linux','osx','posix'):
@@ -17,12 +17,12 @@ class OutputEngine:
             print("\n" * 120)
 
     @staticmethod
-    def print_separator(length=40):
+    def _print_separator(length=40):
         print("~" * length)
 
     @classmethod
     def print_interface(cls, macgyver, loot, backpack):
-        cls.clear_console()
+        cls._clear_console()
         # Draw maze
         for y_coordinate in range(Maze.MIN_HEIGHT, Maze.MAX_HEIGHT+1):
             line = ""
@@ -55,16 +55,15 @@ class OutputEngine:
         print("Backpack: {} items".format(macgyver.items_in_backpack))
         for item in backpack:
             print("- {}".format(item.name.capitalize()))
-        cls.print_separator(17)
+        cls._print_separator(17)
 
     @classmethod
     def print_ending(cls, message, length=40):
-        OutputEngine.clear_console()
-        OutputEngine.print_separator(length)
+        cls._clear_console()
+        cls._print_separator(length)
         print("MacGyver".center(length))
         print("(CLI version)".center(length))
-        OutputEngine.print_separator(length)
+        cls._print_separator(length)
         for line in message.split("\n"):
             print(line.center(length))
-        OutputEngine.print_separator(length)
-
+        cls._print_separator(length)

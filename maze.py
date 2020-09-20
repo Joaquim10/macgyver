@@ -55,7 +55,7 @@ class Maze:
 
     @classmethod
     def free_paths(cls):
-        return [coordinates for coordinates in cls.ZONES 
+        return [coordinates for coordinates in cls.ZONES
             if cls.ZONES[coordinates] == cls.STRUCTURE_PATH]
 
     @classmethod

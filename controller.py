@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
-class InputEngine:
+class Controller:
 
     HOT_KEYS = {
         "move left": "Q", "move right": "D", "move up": "Z", "move down": "S",
