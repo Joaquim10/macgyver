@@ -25,25 +25,46 @@ class Maze:
             cls.STRUCTURE_START: "?",
             cls.STRUCTURE_EXIT: "!"
         }
+        counters = {
+            cls.STRUCTURE_WALL: 0,
+            cls.STRUCTURE_PATH: 0,
+            cls.STRUCTURE_START: 0,
+            cls.STRUCTURE_EXIT: 0
+        }
         subdirectory = "config"
         configuration_file = "maze.txt"
         working_directory = os.path.dirname(__file__)
-        configuration_file = os.path.join(working_directory, subdirectory,
-            configuration_file)
+        configuration_file = os.path.join(working_directory, subdirectory, configuration_file)
         try:
             with open(configuration_file, 'r') as config_file:
                 for line_number, line in enumerate(config_file):
                     for char_number, char in enumerate(line):
+                        structure = cls.STRUCTURE_PATH
                         for structure_key in structures:
-                            structure = cls.STRUCTURE_PATH
                             if char == structures[structure_key]:
                                 structure = structure_key
                                 break
                         cls.ZONES[(char_number, line_number - 1)] = structure
+                        counters[structure] += 1
         except FileNotFoundError as error:
-            print("The configuration file was not found : {}".format(error))
+            print("The configuration file was not found.")
+            return error
+        except PermissionError as error:
+            print("You don't have the adequate rights to read the configuration file.")
+            return error
         except Exception as error:
-            print("Unexpected error : {} ".format(error))
+            print("Unexpected error.")
+            return error
+        else:
+            if (counters[cls.STRUCTURE_START] < 1 or
+                counters[cls.STRUCTURE_EXIT] < 1 or
+                counters[cls.STRUCTURE_PATH] < 3):
+                try:
+                    raise Exception("corrupted configuration file : {}".format(configuration_file))
+                except Exception as error:
+                    return error
+            else:
+                return None
 
     @classmethod
     def location(cls, structure):
@@ -63,7 +84,7 @@ class Maze:
         free_location = False
         while not free_location:
             coordinates = (random.randrange(cls.MIN_WIDTH, cls.MAX_WIDTH),
-            random.randrange(cls.MIN_HEIGHT, cls.MAX_HEIGHT))
+                random.randrange(cls.MIN_HEIGHT, cls.MAX_HEIGHT))
             if coordinates in locations:
                 free_location = True
         return coordinates

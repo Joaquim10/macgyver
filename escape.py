@@ -29,17 +29,20 @@ class Game:
     }
 
     def __init__(self):
-        Maze.init_zones()
-        self.macgyver = MacGyver(Maze.location(Maze.STRUCTURE_START))
-        self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
-        self.free_paths = Maze.free_paths()
-        self.game_status = "game in progress"
-        self.backpack = []
-        self.loot = [] # Drop items on random free paths
-        for item_name in ["needle", "tube", "ether"]:
-            location = Maze.random_location(self.free_paths)
-            self.loot.append(Item(item_name, location))
-            self.free_paths.remove(location)
+        self.error = Maze.init_zones()
+        if not self.error:
+            self.game_status = "game in progress"
+            self.macgyver = MacGyver(Maze.location(Maze.STRUCTURE_START))
+            self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
+            self.free_paths = Maze.free_paths()
+            self.backpack = []
+            self.loot = [] # Drop items on random free paths
+            for item_name in ["needle", "tube", "ether"]:
+                location = Maze.random_location(self.free_paths)
+                self.loot.append(Item(item_name, location))
+                self.free_paths.remove(location)
+        else:
+            self.game_status = "game error"
 
     def handle_actions(self, command):
         x_coordinate, y_coordinate = self.macgyver.position
@@ -75,7 +78,10 @@ class Game:
                 self.handle_actions(command)
             elif command == "exit":
                 self.game_status = "game canceled"
-        Output.print_ending(self.ENDINGS[self.game_status])
+        if self.game_status != "game error":
+            Output.print_ending(self.ENDINGS[self.game_status])
+        else:
+            print(self.error)
 
 if __name__ == "__main__":
     game = Game()
