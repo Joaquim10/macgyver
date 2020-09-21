@@ -36,7 +36,8 @@ class Game:
             self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
             self.free_paths = Maze.free_paths()
             self.backpack = []
-            self.loot = [] # Drop items on random free paths
+            # Drop items on random free paths
+            self.loot = []
             for item_name in ["needle", "tube", "ether"]:
                 location = Maze.random_location(self.free_paths)
                 self.loot.append(Item(item_name, location))
@@ -58,12 +59,14 @@ class Game:
         if not Maze.collision_detected(destination):
             self.macgyver.move(destination) # Move
             for item in self.loot:
-                if destination == item.position: # Pick up item
+                if destination == item.position:
+                    # Pick up item
                     self.macgyver.pick_up_item()
                     self.backpack.append(item)
                     self.loot.remove(item)
                     self.free_paths.append(item.position)
-            if destination == self.guardian.position: # Ending
+            if destination == self.guardian.position:
+                # Ending
                 if self.macgyver.craft_item():
                     self.game_status = "game won"
                 else:
@@ -71,18 +74,21 @@ class Game:
 
     def play_game(self):
         while self.game_status == "game in progress":
-            Output.print_interface(self.macgyver, self.loot,
-                self.backpack)
+            Output.print_interface(self.macgyver, self.loot, self.backpack)
             command = Controller.command("Direction ? ")
             if Controller.is_move(command):
                 self.handle_actions(command)
             elif command == "exit":
                 self.game_status = "game canceled"
-        if self.game_status != "game error":
+        if self.game_status != "game error": # Ending
             Output.print_ending(self.ENDINGS[self.game_status])
         else:
             print(self.error)
 
-if __name__ == "__main__":
+
+def main():
     game = Game()
     game.play_game()
+
+if __name__ == "__main__":
+    main()

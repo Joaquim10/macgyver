@@ -24,34 +24,30 @@ class Output:
     def print_interface(cls, macgyver, loot, backpack):
         cls._clear_console()
         # Draw maze
-        for y_coordinate in range(Maze.MIN_HEIGHT, Maze.MAX_HEIGHT+1):
+        for y_coordinate in range(Maze.MIN_HEIGHT, Maze.MAX_HEIGHT + 1):
             line = ""
-            for x_coordinate in range(Maze.MIN_WIDTH, Maze.MAX_WIDTH+1):
+            for x_coordinate in range(Maze.MIN_WIDTH, Maze.MAX_WIDTH + 1):
                 # Structures
-                if (Maze.ZONES[x_coordinate, y_coordinate] ==
-                        Maze.STRUCTURE_WALL):
+                if (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_WALL):
                     char = "#"
-                elif (Maze.ZONES[x_coordinate, y_coordinate] ==
-                        Maze.STRUCTURE_PATH):
+                elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_PATH):
                     char = " "
-                elif (Maze.ZONES[x_coordinate, y_coordinate] ==
-                        Maze.STRUCTURE_START):
+                elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_START):
                     char = "?"
-                elif (Maze.ZONES[x_coordinate, y_coordinate] ==
-                        Maze.STRUCTURE_EXIT):
+                elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_EXIT):
                     char = "!"
                 # Special locations
                 if (x_coordinate, y_coordinate) == macgyver.position:
-                    char = "@"
+                    char = "@" # MacGyver
                 else:
                     for item in loot:
                         if item.position == (x_coordinate, y_coordinate):
-                            char = "$"
+                            char = "$" # Item
                 line += char
             print(line)
         # Print MacGyver current position
         print("Macgyver", macgyver.position)
-        # Print backpack items
+        # Print counter and items in backpack
         print("Backpack: {} items".format(macgyver.items_in_backpack))
         for item in backpack:
             print("- {}".format(item.name.capitalize()))

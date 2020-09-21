@@ -31,10 +31,12 @@ class Maze:
             cls.STRUCTURE_START: 0,
             cls.STRUCTURE_EXIT: 0
         }
+
         subdirectory = "config"
         configuration_file = "maze.txt"
         working_directory = os.path.dirname(__file__)
         configuration_file = os.path.join(working_directory, subdirectory, configuration_file)
+
         try:
             with open(configuration_file, 'r') as config_file:
                 for line_number, line in enumerate(config_file):
@@ -53,14 +55,15 @@ class Maze:
             print("You don't have the adequate rights to read the configuration file.")
             return error
         except Exception as error:
-            print("Unexpected error.")
+            print("An unexpected error occured when initialising the maze.")
             return error
         else:
             if (counters[cls.STRUCTURE_START] < 1 or
                 counters[cls.STRUCTURE_EXIT] < 1 or
                 counters[cls.STRUCTURE_PATH] < 3):
                 try:
-                    raise Exception("corrupted configuration file : {}".format(configuration_file))
+                    raise Exception("The configuration file is corrupted : {}"
+                        .format(configuration_file))
                 except Exception as error:
                     return error
             else:
