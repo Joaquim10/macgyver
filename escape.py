@@ -13,11 +13,11 @@ class Game:
 
     ENDINGS = {
         "game won" :
-            "MacGyver crafts an anaesthetic syringe.\n"
-            "Then, he sneaks up to the Guardian\n"
-            "and puts him to sleep.\n"
-            "Finally, he runs away\n"
-            "from the labyrinth.\n"
+            "The guardian bars the exit of the maze.\n"
+            "MacGyver sneaks into the shadows and\n"
+            "plants his anaesthetic syringe\n"
+            "in the guard's neck, who collapses.\n"
+            "MacGyver then leaves the labyrinth.\n"
             "Well played !",
         "game lost":
             "MacGyver rushes the exit of the maze,\n"
@@ -35,7 +35,7 @@ class Game:
             self.macgyver = MacGyver(Maze.location(Maze.STRUCTURE_START))
             self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
             self.free_paths = Maze.free_paths()
-            self.backpack = []
+            self.syringe = Item("syringe", self.macgyver.position)
             # Drop items on random free paths
             self.loot = []
             for item_name in ["needle", "tube", "ether"]:
@@ -60,21 +60,22 @@ class Game:
             self.macgyver.move(destination) # Move
             for item in self.loot:
                 if destination == item.position:
-                    # Pick up item
-                    self.macgyver.pick_up_item()
-                    self.backpack.append(item)
+                    self.macgyver.pick_up(item) # Pick up an item
                     self.loot.remove(item)
                     self.free_paths.append(item.position)
-            if destination == self.guardian.position:
-                # Ending
-                if self.macgyver.craft_item():
+                    if self.macgyver.items_in_backpack >=3: # Craft an item
+                        Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
+                        input("MacGyver is crafting a syringe...\n")
+                        self.macgyver.craft(self.syringe)
+            if destination == self.guardian.position: # Ending
+                if self.syringe in self.macgyver.backpack:
                     self.game_status = "game won"
                 else:
                     self.game_status = "game lost"
 
     def play_game(self):
         while self.game_status == "game in progress":
-            Output.print_interface(self.macgyver, self.loot, self.backpack)
+            Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
             command = Controller.command("Direction ? ")
             if Controller.is_move(command):
                 self.handle_actions(command)
