@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
+import random
 import pygame
-
 from maze import Maze
 from macgyver import MacGyver
 from guardian import Guardian
@@ -28,7 +28,8 @@ class Game:
             "Game over !"
     }
 
-    SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGH = 800, 600
+    SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
+    BLACK = 0, 0, 0
 
     HOT_KEYS = {
         "move left": pygame.K_LEFT,
@@ -41,24 +42,21 @@ class Game:
     def __init__(self):
         pygame.init()
         # initialize display
-        self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
+        self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption('MagGyver - Escape the labyrinth')
 
-        self.error = Maze.init_zones()
-        if not self.error:
-            self.game_status = "game in progress"
-            self.macgyver = MacGyver()
-            self.guardian = Guardian()
-            self.free_paths = Maze.free_paths()
-            self.syringe = Item("syringe", self.macgyver.position)
-            # Drop items on random free paths
-            self.loot = []
-            for item_name in ["needle", "tube", "ether"]:
-                location = Maze.random_location(self.free_paths)
-                self.loot.append(Item(item_name, location))
-                self.free_paths.remove(location)
-        else:
-            self.game_status = "game error"
+        self.game_status = "game in progress"
+        self.maze = Maze()
+        self.macgyver = MacGyver()
+        self.guardian = Guardian()
+        self.free_paths = Maze.free_paths()
+        self.syringe = Item("syringe", self.macgyver.position)
+        # Drop items on random free paths
+        self.loot = []
+        for item_name in ["needle", "tube", "ether"]:
+            location = random.choice(self.free_paths)
+            self.loot.append(Item(item_name, location))
+            self.free_paths.remove(location)
 
     @classmethod
     def command(cls, key):
@@ -68,6 +66,13 @@ class Game:
                 command = kb_command
                 break
         return command
+
+    @classmethod
+    def collision_detected(cls, location):
+        x_coordinate, y_coordinate = location
+        return (Maze.ZONES[location] == Maze.STRUCTURE_WALL or
+        x_coordinate < Maze.MIN_WIDTH  or x_coordinate > Maze.MAX_WIDTH or
+        y_coordinate < Maze.MIN_HEIGHT or y_coordinate > Maze.MAX_HEIGHT)
 
     def handle_actions(self, command):
         x_coordinate, y_coordinate = self.macgyver.position
@@ -80,7 +85,7 @@ class Game:
         elif command == "move down":
             y_coordinate += 1
         destination = x_coordinate, y_coordinate
-        if not Maze.collision_detected(destination):
+        if not self.collision_detected(destination):
             self.macgyver.move(destination) # Move
             for item in self.loot:
                 if destination == item.position:
@@ -96,8 +101,20 @@ class Game:
                 else:
                     self.game_status = "game lost"
 
+    def display_backgroung(self):
+        for y_coordinate in range(Maze.MIN_HEIGHT, Maze.HEIGHT):
+            for x_coordinate in range(Maze.MIN_WIDTH, Maze.WIDTH):
+                if (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_WALL):
+                    self.maze.wall_rect.topleft = (x_coordinate * self.maze.wall_rect.w,
+                    y_coordinate * self.maze.wall_rect.h)
+                    self.screen.blit(self.maze.wall_image, self.maze.wall_rect)
+                else:
+                    self.maze.path_rect.topleft = (x_coordinate * self.maze.path_rect.w,
+                    y_coordinate * self.maze.path_rect.h)
+                    self.screen.blit(self.maze.path_image, self.maze.path_rect)
+
     def play_game(self):
-        Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
+        #Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
         # Event loop
         while self.game_status == "game in progress":
             for event in pygame.event.get():
@@ -112,15 +129,15 @@ class Game:
                         Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
 
             # Display on the screen
-            self.screen.fill((0,0,0))
+            self.screen.fill(self.BLACK)
+            self.display_backgroung()
+            self.screen.blit(self.maze.path_image, self.maze.path_rect)
+            self.screen.blit(self.maze.wall_image, self.maze.wall_rect)
             self.screen.blit(self.guardian.image, self.guardian.rect)
             self.screen.blit(self.macgyver.image, self.macgyver.rect)
             pygame.display.flip()
 
-        if self.game_status != "game error": # Ending
-            Output.print_ending(self.ENDINGS[self.game_status])
-        else:
-            print(self.error)
+        Output.print_ending(self.ENDINGS[self.game_status]) # Ending
 
 
 def main():
