@@ -28,7 +28,7 @@ class Game:
             "Game over !"
     }
 
-    SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGH = 640, 480
+    SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGH = 800, 600
 
     HOT_KEYS = {
         "move left": pygame.K_LEFT,
@@ -110,11 +110,12 @@ class Game:
                     elif command.startswith("move"):
                         self.handle_actions(command)
                         Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
-            
+
+            # Display on the screen
             self.screen.fill((0,0,0))
             self.screen.blit(self.macgyver.image, self.macgyver.rect)
             pygame.display.flip()
-        
+
         if self.game_status != "game error": # Ending
             Output.print_ending(self.ENDINGS[self.game_status])
         else:
