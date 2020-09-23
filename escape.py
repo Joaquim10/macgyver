@@ -2,7 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 import pygame
-from pygame.locals import *
 
 from maze import Maze
 from macgyver import MacGyver
@@ -12,7 +11,6 @@ from output import Output
 
 
 class Game:
-
     ENDINGS = {
         "game won" :
             "The guardian bars the exit of the maze.\n"
@@ -31,26 +29,25 @@ class Game:
     }
 
     SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGH = 640, 480
-    BLACK = 0, 0, 0
 
     HOT_KEYS = {
-        "move left": K_LEFT,
-        "move right": K_RIGHT,
-        "move up": K_UP,
-        "move down": K_DOWN,
-        "exit game" : K_ESCAPE
+        "move left": pygame.K_LEFT,
+        "move right": pygame.K_RIGHT,
+        "move up": pygame.K_UP,
+        "move down": pygame.K_DOWN,
+        "exit game" : pygame.K_ESCAPE
     }
 
     def __init__(self):
         pygame.init()
         # initialize display
-        display_surface = pygame.display.set_mode(self.SCREEN_SIZE)
+        self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
         pygame.display.set_caption('MagGyver - Escape the labyrinth')
 
         self.error = Maze.init_zones()
         if not self.error:
             self.game_status = "game in progress"
-            self.macgyver = MacGyver(Maze.location(Maze.STRUCTURE_START))
+            self.macgyver = MacGyver()
             self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
             self.free_paths = Maze.free_paths()
             self.syringe = Item("syringe", self.macgyver.position)
@@ -104,15 +101,20 @@ class Game:
         # Event loop
         while self.game_status == "game in progress":
             for event in pygame.event.get():
-                if event.type == QUIT:
+                if event.type == pygame.QUIT:
                     self.game_status = "game canceled"
-                elif event.type == KEYDOWN:
+                elif event.type == pygame.KEYDOWN:
                     command = self.command(event.key)
                     if command == "exit game":
                         self.game_status = "game canceled"
                     elif command.startswith("move"):
                         self.handle_actions(command)
                         Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
+            
+            self.screen.fill((0,0,0))
+            self.screen.blit(self.macgyver.image, self.macgyver.rect)
+            pygame.display.flip()
+        
         if self.game_status != "game error": # Ending
             Output.print_ending(self.ENDINGS[self.game_status])
         else:
