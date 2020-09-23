@@ -48,7 +48,7 @@ class Game:
         if not self.error:
             self.game_status = "game in progress"
             self.macgyver = MacGyver()
-            self.guardian = Guardian(Maze.location(Maze.STRUCTURE_EXIT))
+            self.guardian = Guardian()
             self.free_paths = Maze.free_paths()
             self.syringe = Item("syringe", self.macgyver.position)
             # Drop items on random free paths
@@ -113,6 +113,7 @@ class Game:
 
             # Display on the screen
             self.screen.fill((0,0,0))
+            self.screen.blit(self.guardian.image, self.guardian.rect)
             self.screen.blit(self.macgyver.image, self.macgyver.rect)
             pygame.display.flip()
 
