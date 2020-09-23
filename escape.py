@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
+import pygame
+from pygame.locals import *
+
 from maze import Maze
 from macgyver import MacGyver
 from guardian import Guardian
 from item import Item
 from output import Output
-from controller import Controller
 
 
 class Game:
@@ -17,7 +19,7 @@ class Game:
             "MacGyver sneaks into the shadows and\n"
             "plants his anaesthetic syringe\n"
             "in the guard's neck, who collapses.\n"
-            "MacGyver then leaves the labyrinth.\n"
+            "MacGyver then escape the labyrinth.\n"
             "Well played !",
         "game lost":
             "MacGyver rushes the exit of the maze,\n"
@@ -28,7 +30,23 @@ class Game:
             "Game over !"
     }
 
+    SCREEN_SIZE = SCREEN_WIDTH, SCREEN_HEIGH = 640, 480
+    BLACK = 0, 0, 0
+
+    HOT_KEYS = {
+        "move left": K_LEFT,
+        "move right": K_RIGHT,
+        "move up": K_UP,
+        "move down": K_DOWN,
+        "exit game" : K_ESCAPE
+    }
+
     def __init__(self):
+        pygame.init()
+        # initialize display
+        display_surface = pygame.display.set_mode(self.SCREEN_SIZE)
+        pygame.display.set_caption('MagGyver - Escape the labyrinth')
+
         self.error = Maze.init_zones()
         if not self.error:
             self.game_status = "game in progress"
@@ -44,6 +62,15 @@ class Game:
                 self.free_paths.remove(location)
         else:
             self.game_status = "game error"
+
+    @classmethod
+    def command(cls, key):
+        command = "unknown"
+        for kb_command in cls.HOT_KEYS:
+            if key == cls.HOT_KEYS[kb_command]:
+                command = kb_command
+                break
+        return command
 
     def handle_actions(self, command):
         x_coordinate, y_coordinate = self.macgyver.position
@@ -65,7 +92,6 @@ class Game:
                     self.free_paths.append(item.position)
                     if self.macgyver.items_in_backpack >=3: # Craft an item
                         Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
-                        input("MacGyver is crafting a syringe...\n")
                         self.macgyver.craft(self.syringe)
             if destination == self.guardian.position: # Ending
                 if self.syringe in self.macgyver.backpack:
@@ -74,13 +100,19 @@ class Game:
                     self.game_status = "game lost"
 
     def play_game(self):
+        Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
+        # Event loop
         while self.game_status == "game in progress":
-            Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
-            command = Controller.command("Direction ? ")
-            if Controller.is_move(command):
-                self.handle_actions(command)
-            elif command == "exit":
-                self.game_status = "game canceled"
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    self.game_status = "game canceled"
+                elif event.type == KEYDOWN:
+                    command = self.command(event.key)
+                    if command == "exit game":
+                        self.game_status = "game canceled"
+                    elif command.startswith("move"):
+                        self.handle_actions(command)
+                        Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
         if self.game_status != "game error": # Ending
             Output.print_ending(self.ENDINGS[self.game_status])
         else:

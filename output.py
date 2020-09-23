@@ -21,7 +21,7 @@ class Output:
         print("~" * length)
 
     @classmethod
-    def print_interface(cls, macgyver, loot, backpack):
+    def print_interface(cls, macgyver, loot, backpack, length=40):
         cls._clear_console()
         # Draw maze
         for y_coordinate in range(Maze.MIN_HEIGHT, Maze.MAX_HEIGHT + 1):
@@ -44,21 +44,25 @@ class Output:
                         if item.position == (x_coordinate, y_coordinate):
                             char = "$" # Item
                 line += char
-            print(line)
-        # Print MacGyver current position
-        print("Macgyver", macgyver.position)
-        # Print counter and items in backpack
-        print("Backpack: {} items".format(macgyver.items_in_backpack))
+            print(line.center(length))
+        cls._print_separator(length)
+        # Print MacGyver current position and counter and items in backpack
+        string = "Backpack: {} items".format(macgyver.items_in_backpack)
+        print("{}{}".format(string, "Macgyver {}".format(macgyver.position).rjust(
+            length-len(string))))
         for item in backpack:
-            print("- {}".format(item.name.capitalize()))
-        cls._print_separator(17)
+            if item.name == "syringe":
+                print(" - {} (crafted item)".format(item.name.capitalize()))
+            else:
+                print(" - {}".format(item.name.capitalize()))
+        cls._print_separator(length)
 
     @classmethod
     def print_ending(cls, message, length=40):
-        cls._clear_console()
+        print()
         cls._print_separator(length)
         print("MacGyver".center(length))
-        print("(CLI version)".center(length))
+        print("(Pygame version)".center(length))
         cls._print_separator(length)
         for line in message.split("\n"):
             print(line.center(length))
