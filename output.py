@@ -3,7 +3,7 @@
 
 import os
 from maze import Maze
-
+from items import Items
 
 class Output:
 
@@ -21,12 +21,12 @@ class Output:
         print("~" * length)
 
     @classmethod
-    def print_interface(cls, macgyver, loot, backpack, length=40):
+    def print_interface(cls, macgyver, length=40):
         cls._clear_console()
         # Draw maze
-        for y_coordinate in range(Maze.MIN_HEIGHT, Maze.MAX_HEIGHT + 1):
+        for y_coordinate in range(Maze.MIN_HEIGHT, Maze.HEIGHT):
             line = ""
-            for x_coordinate in range(Maze.MIN_WIDTH, Maze.MAX_WIDTH + 1):
+            for x_coordinate in range(Maze.MIN_WIDTH, Maze.WIDTH):
                 # Structures
                 if (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_WALL):
                     char = "#"
@@ -40,7 +40,7 @@ class Output:
                 if (x_coordinate, y_coordinate) == macgyver.position:
                     char = "@" # MacGyver
                 else:
-                    for item in loot:
+                    for item in Items.LOOT:
                         if item.position == (x_coordinate, y_coordinate):
                             char = "$" # Item
                 line += char
@@ -50,11 +50,11 @@ class Output:
         string = "Backpack: {} items".format(macgyver.items_in_backpack)
         print("{}{}".format(string, "Macgyver {}".format(macgyver.position).rjust(
             length-len(string))))
-        for item in backpack:
-            if item.name == "syringe":
-                print(" - {} (crafted item)".format(item.name.capitalize()))
-            else:
-                print(" - {}".format(item.name.capitalize()))
+        for item in Items.BACKPACK:
+            print("- {}".format(item.name.capitalize()))
+            items_names = [item.name.capitalize() for item in Items.USED]
+            if len(items_names) > 0:
+                print("  (crafted with {})".format(", ".join(items_names)))
         cls._print_separator(length)
 
     @classmethod

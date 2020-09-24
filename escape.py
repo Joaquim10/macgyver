@@ -1,12 +1,11 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
-import random
 import pygame
 from maze import Maze
 from macgyver import MacGyver
 from guardian import Guardian
-from item import Item
+from items import Items
 from output import Output
 
 
@@ -40,8 +39,8 @@ class Game:
     }
 
     def __init__(self):
-        pygame.init()
         # initialize display
+        pygame.init()
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption('MagGyver - Escape the labyrinth')
 
@@ -49,14 +48,7 @@ class Game:
         self.maze = Maze()
         self.macgyver = MacGyver()
         self.guardian = Guardian()
-        self.free_paths = Maze.free_paths()
-        self.syringe = Item("syringe", self.macgyver.position)
-        # Drop items on random free paths
-        self.loot = []
-        for item_name in ["needle", "tube", "ether"]:
-            location = random.choice(self.free_paths)
-            self.loot.append(Item(item_name, location))
-            self.free_paths.remove(location)
+        self.items = Items()
 
     @classmethod
     def command(cls, key):
@@ -87,16 +79,16 @@ class Game:
         destination = x_coordinate, y_coordinate
         if not self.collision_detected(destination):
             self.macgyver.move(destination) # Move
-            for item in self.loot:
+
+            for item in Items.LOOT:
                 if destination == item.position:
                     self.macgyver.pick_up(item) # Pick up an item
-                    self.loot.remove(item)
-                    self.free_paths.append(item.position)
+                    Items.LOOT.remove(item)
+                    Items.free_paths.append(item.position)
                     if self.macgyver.items_in_backpack >=3: # Craft an item
-                        Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
-                        self.macgyver.craft(self.syringe)
+                        self.macgyver.craft(self.items.syringe)
             if destination == self.guardian.position: # Ending
-                if self.syringe in self.macgyver.backpack:
+                if self.items.syringe in Items.BACKPACK:
                     self.game_status = "game won"
                 else:
                     self.game_status = "game lost"
@@ -114,7 +106,7 @@ class Game:
                     self.screen.blit(self.maze.path_image, self.maze.path_rect)
 
     def play_game(self):
-        #Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
+        Output.print_interface(self.macgyver)
         # Event loop
         while self.game_status == "game in progress":
             for event in pygame.event.get():
@@ -126,7 +118,7 @@ class Game:
                         self.game_status = "game canceled"
                     elif command.startswith("move"):
                         self.handle_actions(command)
-                        Output.print_interface(self.macgyver, self.loot, self.macgyver.backpack)
+                        Output.print_interface(self.macgyver)
 
             # Display on the screen
             self.screen.fill(self.BLACK)
