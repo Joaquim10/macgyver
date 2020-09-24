@@ -21,7 +21,7 @@ class Output:
         print("~" * length)
 
     @classmethod
-    def print_interface(cls, macgyver, length=40):
+    def print_interface(cls, macgyver_position, items_in_backpack, length=40):
         cls._clear_console()
         # Draw maze
         for y_coordinate in range(Maze.MIN_HEIGHT, Maze.HEIGHT):
@@ -37,24 +37,24 @@ class Output:
                 elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_EXIT):
                     char = "!"
                 # Special locations
-                if (x_coordinate, y_coordinate) == macgyver.position:
+                if (x_coordinate, y_coordinate) == macgyver_position:
                     char = "@" # MacGyver
                 else:
-                    for item in Items.LOOT:
+                    for item in Items.loot:
                         if item.position == (x_coordinate, y_coordinate):
                             char = "$" # Item
                 line += char
             print(line.center(length))
         cls._print_separator(length)
         # Print MacGyver current position and counter and items in backpack
-        string = "Backpack: {} items".format(macgyver.items_in_backpack)
-        print("{}{}".format(string, "Macgyver {}".format(macgyver.position).rjust(
-            length-len(string))))
-        for item in Items.BACKPACK:
-            print("- {}".format(item.name.capitalize()))
-            items_names = [item.name.capitalize() for item in Items.USED]
-            if len(items_names) > 0:
-                print("  (crafted with {})".format(", ".join(items_names)))
+        left_column = "Backpack - {} item(s):".format(items_in_backpack)
+        length_column = len(left_column)
+        right_column = "Macgyver {}".format(macgyver_position).rjust(length-length_column)
+        print("{}{}".format(left_column, right_column))
+        for item in Items.backpack:
+            left_column = "- {}".format(item.name.capitalize())
+            right_column = "[{}]".format(item.quality).rjust(length_column-len(left_column))
+            print("{}{}".format(left_column, right_column))
         cls._print_separator(length)
 
     @classmethod
@@ -62,7 +62,7 @@ class Output:
         print()
         cls._print_separator(length)
         print("MacGyver".center(length))
-        print("(Pygame version)".center(length))
+        print("Escape the labyrinth".center(length))
         cls._print_separator(length)
         for line in message.split("\n"):
             print(line.center(length))

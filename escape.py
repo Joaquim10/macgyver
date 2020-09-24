@@ -28,7 +28,7 @@ class Game:
     }
 
     SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
-    BLACK = 0, 0, 0
+    # BLACK = 0, 0, 0
 
     HOT_KEYS = {
         "move left": pygame.K_LEFT,
@@ -78,17 +78,14 @@ class Game:
             y_coordinate += 1
         destination = x_coordinate, y_coordinate
         if not self.collision_detected(destination):
-            self.macgyver.move(destination) # Move
-
-            for item in Items.LOOT:
+            self.macgyver.move(destination)
+            for item in Items.loot:
                 if destination == item.position:
-                    self.macgyver.pick_up(item) # Pick up an item
-                    Items.LOOT.remove(item)
-                    Items.free_paths.append(item.position)
-                    if self.macgyver.items_in_backpack >=3: # Craft an item
-                        self.macgyver.craft(self.items.syringe)
+                    self.items.pick_up(item)
+                    if self.items.items_in_backpack >=3:
+                        self.items.craft()
             if destination == self.guardian.position: # Ending
-                if self.items.syringe in Items.BACKPACK:
+                if Items.syringe in Items.backpack:
                     self.game_status = "game won"
                 else:
                     self.game_status = "game lost"
@@ -106,7 +103,7 @@ class Game:
                     self.screen.blit(self.maze.path_image, self.maze.path_rect)
 
     def play_game(self):
-        Output.print_interface(self.macgyver)
+        Output.print_interface(self.macgyver.position, self.items.items_in_backpack)
         # Event loop
         while self.game_status == "game in progress":
             for event in pygame.event.get():
@@ -118,10 +115,10 @@ class Game:
                         self.game_status = "game canceled"
                     elif command.startswith("move"):
                         self.handle_actions(command)
-                        Output.print_interface(self.macgyver)
+                        Output.print_interface(self.macgyver.position, self.items.items_in_backpack)
 
             # Display on the screen
-            self.screen.fill(self.BLACK)
+            # self.screen.fill(self.BLACK)
             self.display_backgroung()
             self.screen.blit(self.maze.path_image, self.maze.path_rect)
             self.screen.blit(self.maze.wall_image, self.maze.wall_rect)
