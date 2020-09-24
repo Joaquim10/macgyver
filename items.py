@@ -10,15 +10,23 @@ class Items:
     free_paths = []
     loot = []
     backpack = []
-    syringe = Item("syringe", quality="crafted")
 
     def __init__(self):
         self.items_in_backpack = 0
-        # Drop items on random free paths
+        self.syringe = Item("syringe", "seringue.png", (0,0), quality="crafted")
+        self.drop()
+
+    def drop(self):
+        """Drop items on random free paths"""
+        items = {
+            "needle": "aiguille.png",
+            "tube": "tube_plastique.png",
+            "ether": "ether.png"
+        }
         self.free_paths = Maze.free_paths()
-        for item_name in ["needle", "tube", "ether"]:
+        for name in items:
             location = random.choice(self.free_paths)
-            self.loot.append(Item(item_name, location))
+            self.loot.append(Item(name, items[name], location, "material"))
             self.free_paths.remove(location)
 
     def pick_up(self, item):

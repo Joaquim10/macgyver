@@ -28,7 +28,6 @@ class Game:
     }
 
     SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
-    # BLACK = 0, 0, 0
 
     HOT_KEYS = {
         "move left": pygame.K_LEFT,
@@ -85,7 +84,7 @@ class Game:
                     if self.items.items_in_backpack >=3:
                         self.items.craft()
             if destination == self.guardian.position: # Ending
-                if Items.syringe in Items.backpack:
+                if self.items.syringe in Items.backpack:
                     self.game_status = "game won"
                 else:
                     self.game_status = "game lost"
@@ -103,7 +102,7 @@ class Game:
                     self.screen.blit(self.maze.path_image, self.maze.path_rect)
 
     def play_game(self):
-        Output.print_interface(self.macgyver.position, self.items.items_in_backpack)
+        #Output.print_interface(self.macgyver.position, self.items.items_in_backpack)
         # Event loop
         while self.game_status == "game in progress":
             for event in pygame.event.get():
@@ -116,17 +115,16 @@ class Game:
                     elif command.startswith("move"):
                         self.handle_actions(command)
                         Output.print_interface(self.macgyver.position, self.items.items_in_backpack)
-
             # Display on the screen
-            # self.screen.fill(self.BLACK)
             self.display_backgroung()
-            self.screen.blit(self.maze.path_image, self.maze.path_rect)
-            self.screen.blit(self.maze.wall_image, self.maze.wall_rect)
+            for item in self.items.loot:
+                self.screen.blit(item.image, item.rect)
+            self.screen.blit(self.items.syringe.image, self.items.syringe.rect)
             self.screen.blit(self.guardian.image, self.guardian.rect)
             self.screen.blit(self.macgyver.image, self.macgyver.rect)
             pygame.display.flip()
 
-        Output.print_ending(self.ENDINGS[self.game_status]) # Ending
+        #Output.print_ending(self.ENDINGS[self.game_status]) # Ending
 
 
 def main():
