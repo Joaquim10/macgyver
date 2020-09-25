@@ -28,21 +28,21 @@ class Output:
             line = ""
             for x_coordinate in range(Maze.MIN_WIDTH, Maze.WIDTH):
                 # Structures
-                if (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_WALL):
+                if (Maze.zones[x_coordinate, y_coordinate] == Maze.WALL):
                     char = "#"
-                elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_PATH):
+                elif (Maze.zones[x_coordinate, y_coordinate] == Maze.PATH):
                     char = " "
-                elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_START):
+                elif (Maze.zones[x_coordinate, y_coordinate] == Maze.START):
                     char = "?"
-                elif (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_EXIT):
+                elif (Maze.zones[x_coordinate, y_coordinate] == Maze.EXIT):
                     char = "!"
                 # Special locations
                 if (x_coordinate, y_coordinate) == macgyver_position:
-                    char = "@" # MacGyver
+                    char = "@"
                 else:
                     for item in Items.loot:
                         if item.position == (x_coordinate, y_coordinate):
-                            char = "$" # Item
+                            char = "$"
                 line += char
             print(line.center(length))
         cls._print_separator(length)

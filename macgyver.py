@@ -7,11 +7,10 @@ from image import Image
 class MacGyver:
 
     def __init__(self):
-        self.position = Maze.location(Maze.STRUCTURE_START)
+        self.position = Maze.location(Maze.START)
         self.image, self.rect = Image.load("MacGyver.png")
         self.move(self.position)
 
     def move(self, position):
-        self.position = position
-        x_coordinate, y_coordinate = self.position
+        self.position = x_coordinate, y_coordinate = position
         self.rect.topleft = x_coordinate * self.rect.w, y_coordinate * self.rect.h

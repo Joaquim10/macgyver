@@ -7,18 +7,17 @@ from image import Image
 
 class Maze:
 
-    ZONES = {}
     MIN_WIDTH, MAX_WIDTH = 0, 14
     MIN_HEIGHT, MAX_HEIGHT = 0, 14
     WIDTH, HEIGHT = 15, 15
-
-    STRUCTURE_WALL = "Wall"
-    STRUCTURE_PATH = "Path"
-    STRUCTURE_START = "MacGyver"
-    STRUCTURE_EXIT = "Guardian"
+    WALL = "Wall"
+    PATH = "Path"
+    START = "MacGyver"
+    EXIT = "Guardian"
+    zones = {}
 
     def __init__(self):
-        # (0...19, 0...12)
+        # Crop (0...19, 0...12)
         wall_position = 9, 11
         path_position = 0, 2
         crop_width, crop_height = 20, 20
@@ -26,22 +25,23 @@ class Maze:
             wall_position, crop_width, crop_height)
         self.path_image, self.path_rect = Image.load_crop("floor-tiles-20x20.png",
             path_position, crop_width, crop_height)
-
         self._init_zones()
 
     @classmethod
     def _init_zones(cls):
+
         structures = {
-            cls.STRUCTURE_WALL: "#",
-            cls.STRUCTURE_PATH: " ",
-            cls.STRUCTURE_START: "?",
-            cls.STRUCTURE_EXIT: "!"
+            cls.WALL: "#",
+            cls.PATH: " ",
+            cls.START: "?",
+            cls.EXIT: "!"
         }
+
         counters = {
-            cls.STRUCTURE_WALL: 0,
-            cls.STRUCTURE_PATH: 0,
-            cls.STRUCTURE_START: 0,
-            cls.STRUCTURE_EXIT: 0
+            cls.WALL: 0,
+            cls.PATH: 0,
+            cls.START: 0,
+            cls.EXIT: 0
         }
 
         subdirectory = "config"
@@ -58,9 +58,8 @@ class Maze:
                                 structure = structure_key
                                 break
                         if structure != "Unknown":
-                            cls.ZONES[(char_number, line_number - 1)] = structure
+                            cls.zones[(char_number, line_number - 1)] = structure
                             counters[structure] += 1
-
         except FileNotFoundError:
             print("The configuration file was not found:", configuration_file)
             sys.exit()
@@ -69,9 +68,7 @@ class Maze:
             configuration_file)
             sys.exit()
         else:
-            if (counters[cls.STRUCTURE_START] < 1 or
-                counters[cls.STRUCTURE_EXIT] < 1 or
-                counters[cls.STRUCTURE_PATH] < 3):
+            if (counters[cls.START] < 1 or counters[cls.EXIT] < 1 or counters[cls.PATH] < 3):
                 try:
                     raise RuntimeError("The configuration file is corrupted:",
                         format(configuration_file))
@@ -81,13 +78,12 @@ class Maze:
 
     @classmethod
     def location(cls, structure):
-        for coordinates in cls.ZONES:
-            if cls.ZONES[coordinates] == structure:
+        for coordinates in cls.zones:
+            if cls.zones[coordinates] == structure:
                 location = coordinates
                 break
         return location
 
     @classmethod
     def free_paths(cls):
-        return [coordinates for coordinates in cls.ZONES
-            if cls.ZONES[coordinates] == cls.STRUCTURE_PATH]
+        return [coordinates for coordinates in cls.zones if cls.zones[coordinates] == cls.PATH]

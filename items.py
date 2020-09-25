@@ -13,7 +13,7 @@ class Items:
 
     def __init__(self):
         self.items_in_backpack = 0
-        self.syringe = Item("syringe", "seringue.png", (0,0), quality="crafted")
+        self.syringe = Item("syringe", "seringue.png", quality="crafted")
         self.drop()
 
     def drop(self):

@@ -13,7 +13,6 @@ class Image:
     @classmethod
     def load(cls, file_name):
         """ Load image and return image object"""
-
         subdirectory = "ressource"
         working_directory = os.path.dirname(__file__)
         full_name = os.path.join(working_directory, subdirectory, file_name)

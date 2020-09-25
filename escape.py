@@ -72,7 +72,7 @@ class Game:
     @classmethod
     def collision_detected(cls, location):
         x_coordinate, y_coordinate = location
-        return (Maze.ZONES[location] == Maze.STRUCTURE_WALL or
+        return (Maze.zones[location] == Maze.WALL or
         x_coordinate < Maze.MIN_WIDTH  or x_coordinate > Maze.MAX_WIDTH or
         y_coordinate < Maze.MIN_HEIGHT or y_coordinate > Maze.MAX_HEIGHT)
 
@@ -93,7 +93,7 @@ class Game:
         # Display background
         for y_coordinate in range(Maze.MIN_HEIGHT, Maze.HEIGHT):
             for x_coordinate in range(Maze.MIN_WIDTH, Maze.WIDTH):
-                if (Maze.ZONES[x_coordinate, y_coordinate] == Maze.STRUCTURE_WALL):
+                if (Maze.zones[x_coordinate, y_coordinate] == Maze.WALL):
                     self.maze.wall_rect.topleft = (x_coordinate * self.maze.wall_rect.w,
                     y_coordinate * self.maze.wall_rect.h)
                     self.screen.blit(self.maze.wall_image, self.maze.wall_rect)
@@ -107,7 +107,7 @@ class Game:
         self.screen.blit(self.guardian.image, self.guardian.rect)
         self.screen.blit(self.macgyver.image, self.macgyver.rect)
         pygame.display.flip()
- 
+
     def play_game(self):
         dirty_rects = []
         self.display_screen()
@@ -122,7 +122,7 @@ class Game:
                     if command == "exit game":
                         self.game_status = "game canceled"
                     elif command.startswith("move"):
-                        destination = self.destinationx(command)
+                        destination = self.destination(command)
                         if not self.collision_detected(destination):
                             self.screen.blit(self.maze.path_image, self.macgyver.rect)
                             dirty_rects.append(self.macgyver.rect.copy())
