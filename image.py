@@ -8,7 +8,7 @@ import pygame
 
 class Image:
 
-    WIDTH, HEIGHT = 60, 60
+    WIDTH, HEIGHT = 20, 20
 
     @classmethod
     def load(cls, file_name):

@@ -7,9 +7,20 @@ from macgyver import MacGyver
 from guardian import Guardian
 from items import Items
 from output import Output
-
+from image import Image
 
 class Game:
+    SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
+    CAPTION = "MagGyver - Escape the labyrinth"
+
+    HOTKEYS = {
+        "move left": pygame.K_LEFT,
+        "move right": pygame.K_RIGHT,
+        "move up": pygame.K_UP,
+        "move down": pygame.K_DOWN,
+        "exit game" : pygame.K_ESCAPE
+    }
+
     ENDINGS = {
         "game won" :
             "The guardian bars the exit of the maze.\n"
@@ -27,22 +38,18 @@ class Game:
             "Game over !"
     }
 
-    SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
-
-    HOT_KEYS = {
-        "move left": pygame.K_LEFT,
-        "move right": pygame.K_RIGHT,
-        "move up": pygame.K_UP,
-        "move down": pygame.K_DOWN,
-        "exit game" : pygame.K_ESCAPE
-    }
-
     def __init__(self):
-        self.game_status = "game in progress"
-        # initialize display
+        # Initialize display
         pygame.init()
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
-        pygame.display.set_caption("MagGyver - Escape the labyrinth")
+        pygame.display.set_caption(self.CAPTION)
+        # Scale images
+        Image.WIDTH = Image.HEIGHT = min(self.SCREEN_WIDTH // Maze.WIDTH, self.SCREEN_HEIGHT // Maze.HEIGHT)
+        # Center screen
+        self.maze_x = (self.SCREEN_WIDTH - Maze.WIDTH * Image.WIDTH) // 2
+        self.maze_y = (self.SCREEN_HEIGHT - Maze.HEIGHT * Image.HEIGHT) // 2
+        # Initialize game
+        self.game_status = "game in progress"
         self.maze = Maze()
         self.macgyver = MacGyver()
         self.guardian = Guardian()
@@ -51,8 +58,8 @@ class Game:
     @classmethod
     def command(cls, key):
         command = "unknown"
-        for kb_command in cls.HOT_KEYS:
-            if key == cls.HOT_KEYS[kb_command]:
+        for kb_command in cls.HOTKEYS:
+            if key == cls.HOTKEYS[kb_command]:
                 command = kb_command
                 break
         return command
@@ -94,18 +101,18 @@ class Game:
         for y_coordinate in range(Maze.MIN_HEIGHT, Maze.HEIGHT):
             for x_coordinate in range(Maze.MIN_WIDTH, Maze.WIDTH):
                 if (Maze.zones[x_coordinate, y_coordinate] == Maze.WALL):
-                    self.maze.wall_rect.topleft = (x_coordinate * self.maze.wall_rect.w,
-                    y_coordinate * self.maze.wall_rect.h)
-                    self.screen.blit(self.maze.wall_image, self.maze.wall_rect)
+                    self.maze.wall_rect.left = x_coordinate * self.maze.wall_rect.w
+                    self.maze.wall_rect.top = y_coordinate * self.maze.wall_rect.h
+                    self.screen.blit(self.maze.wall_image, self.maze.wall_rect.move(self.maze_x, self.maze_y))
                 else:
-                    self.maze.path_rect.topleft = (x_coordinate * self.maze.path_rect.w,
-                    y_coordinate * self.maze.path_rect.h)
-                    self.screen.blit(self.maze.path_image, self.maze.path_rect)
+                    self.maze.path_rect.left = x_coordinate * self.maze.path_rect.w
+                    self.maze.path_rect.top = y_coordinate * self.maze.path_rect.h
+                    self.screen.blit(self.maze.path_image, self.maze.path_rect.move(self.maze_x, self.maze_y))
         # Display sprites
         for item in self.items.loot:
-            self.screen.blit(item.image, item.rect)
-        self.screen.blit(self.guardian.image, self.guardian.rect)
-        self.screen.blit(self.macgyver.image, self.macgyver.rect)
+            self.screen.blit(item.image, item.rect.move(self.maze_x, self.maze_y))
+        self.screen.blit(self.guardian.image, self.guardian.rect.move(self.maze_x, self.maze_y))
+        self.screen.blit(self.macgyver.image, self.macgyver.rect.move(self.maze_x, self.maze_y))
         pygame.display.flip()
 
     def play_game(self):
@@ -124,16 +131,15 @@ class Game:
                     elif command.startswith("move"):
                         destination = self.destination(command)
                         if not self.collision_detected(destination):
-                            self.screen.blit(self.maze.path_image, self.macgyver.rect)
-                            dirty_rects.append(self.macgyver.rect.copy())
+                            self.screen.blit(self.maze.path_image, self.macgyver.rect.move(self.maze_x, self.maze_y))
+                            dirty_rects.append(self.macgyver.rect.copy().move(self.maze_x, self.maze_y))
                             self.move(destination)
-                            self.screen.blit(self.maze.path_image, self.macgyver.rect)
-                            self.screen.blit(self.macgyver.image, self.macgyver.rect)
-                            dirty_rects.append(self.macgyver.rect)
+                            self.screen.blit(self.maze.path_image, self.macgyver.rect.move(self.maze_x, self.maze_y))
+                            self.screen.blit(self.macgyver.image, self.macgyver.rect.move(self.maze_x, self.maze_y))
+                            dirty_rects.append(self.macgyver.rect.move(self.maze_x, self.maze_y))
                             pygame.display.update(dirty_rects)
                             dirty_rects.clear()
-                            #Output.print_interface(self.macgyver.position,
-                            #self.items.items_in_backpack)
+                            #Output.print_interface(self.macgyver.position, self.items.items_in_backpack)
         Output.print_ending(self.ENDINGS[self.game_status]) # Ending
 
 
