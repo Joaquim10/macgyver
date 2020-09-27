@@ -26,13 +26,15 @@ class Game:
         "game won" :
             "The guardian bars the exit of the maze.\n\n"
             "MacGyver sneaks into the shadows\n"
-            "and plants his anaesthetic syringe\n"
-            "in the guard's neck, who collapses.\n\n"
+            "and plants his anaesthetic syringe in\n"
+            "the guard's neck, who collapses.\n\n"
             "MacGyver then escape the labyrinth.\n\n"
             "Well played !",
         "game lost":
-            "MacGyver rushes the exit of the maze,\n"
-            "but he's killed by the Guardian.\n\n"
+            "The guardian patrols the labyrinth.\n\n"
+            "MacGyver rushes towards the exit,\n"
+            "but a fight begins and he is finally\n"
+            "killed by the Guardian.\n\n"
             "Game over !",
         "game canceled":
             "MacGyver is lost in the maze forever.\n\n"
@@ -47,22 +49,22 @@ class Game:
         # Initialize scaled images
         Image.WIDTH = Image.HEIGHT = min(self.SCREEN_WIDTH // Maze.WIDTH,
             self.SCREEN_HEIGHT // Maze.HEIGHT)
-        # Initialize screen centered maze area
-        self.maze_area, self.maze_rect = self.maze_area()
+        # Initialize maze area
+        self.maze_area = pygame.display.get_surface()
+        self.maze_rect = self.maze_area.get_rect()
         # Initialize game
         self.maze = Maze()
         self.macgyver = MacGyver()
         self.guardian = Guardian()
         self.items = Items()
 
-    def maze_area(self):
+    def center_maze_area(self):
         width = Maze.WIDTH * Image.WIDTH
         height = Maze.HEIGHT * Image.HEIGHT
         x_coordinate = (self.SCREEN_WIDTH - width) // 2
         y_coordinate = (self.SCREEN_HEIGHT - height) // 2
-        maze_rect = pygame.Rect(x_coordinate, y_coordinate, width, height)
-        maze_area = self.screen.subsurface(maze_rect).convert()
-        return maze_area, maze_rect
+        self.maze_rect = pygame.Rect(x_coordinate, y_coordinate, width, height)
+        self.maze_area = self.screen.subsurface(self.maze_rect).convert()
 
     @classmethod
     def command(cls, key):
@@ -125,34 +127,23 @@ class Game:
         self.maze_area.blit(self.guardian.image, self.guardian.rect)
         self.maze_area.blit(self.macgyver.image, self.macgyver.rect)
 
-    def blit_ending(self, ending, position, font, color=pygame.Color("white")):
-        # 2D array where each row is a list of words
-        words = [word.split(' ') for word in ending.splitlines()]
-        space_width = font.size(' ')[0]
-        x_coordinate, y_coordinate = position
-        for line in words:
-            for word in line:
-                word_surface = font.render(word, 0, color)
-                word_width, word_height = word_surface.get_size()
-                if x_coordinate + word_width >= self.maze_rect.right - position[0]:
-                    x_coordinate = position[0]  # New line
-                    y_coordinate += word_height
-                self.maze_area.blit(word_surface, (x_coordinate, y_coordinate))
-                x_coordinate += word_width + space_width
-            x_coordinate = position[0]  # New line
-            y_coordinate += word_height
-
-    def blit_message(self, message, y_position, font, color=pygame.Color("white")):
-        message_surface = font.render(message, 0, color)
-        message_rect = message_surface.get_rect()
-        message_rect.x = (self.maze_rect.width - message_rect.width) // 2
-        message_rect.y = self.maze_rect.bottom - message_rect.height - y_position
-        self.maze_area.blit(message_surface, message_rect)
-
+    def blit_text(self, text, y_position, font, color=pygame.Color("white")):
+        """ blit maze area horizontally centered multi-line text (without automatic line feed) """
+        lines = text.splitlines()
+        for line in lines:
+            line_surface = font.render(line, True, color)
+            line_rect = line_surface.get_rect()
+            line_rect.x = (self.maze_rect.width - line_rect.width) // 2
+            line_rect.y = y_position
+            self.maze_area.blit(line_surface, line_rect)
+            y_position += line_rect.height
+        y_position += line_rect.height
+        return y_position
 
     def play_game(self):
         game_status = "game in progress"
         dirty_rects = []
+        self.center_maze_area() # Set screen centered maze area
         self.blit_maze_area()
         self.screen.blit(self.maze_area, self.maze_rect)
         pygame.display.flip()
@@ -197,10 +188,11 @@ class Game:
                                 font = pygame.font.SysFont('Arial', Image.WIDTH * 5 // 6)
                                 ending = (self.ENDINGS[game_status] + "\n\n")
                                 message = "Press SPACE or ESCAPE to quit."
-                                self.blit_ending(ending, (Image.WIDTH // 2, Image.HEIGHT),
-                                    font, pygame.Color('white'))
-                                self.blit_message(message, Image.HEIGHT * 2, font,
-                                    pygame.Color("orange"))
+                                text_position = Image.HEIGHT * 2
+                                text_position = self.blit_text(ending, text_position,
+                                font, True, pygame.Color("white"))
+                                text_position = self.blit_text(message, text_position,
+                                    font, True, pygame.Color("orange"))
                                 self.screen.blit(self.maze_area, self.maze_rect)
                                 pygame.display.flip()
                                 Output.print_ending(self.ENDINGS[game_status])
