@@ -5,8 +5,9 @@ from image import Image
 
 class Item:
 
-    def __init__(self, name, image, position=(-1, -1), quality="material"):
+    def __init__(self, name, image, description="", position=(-1, -1), quality="material"):
         self.name = name
+        self.description = description
         self.position = x_coordinate, y_coordinate = position
         self.quality = quality
         self.image, self.rect = Image.load(image)
