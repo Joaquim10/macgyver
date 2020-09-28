@@ -58,12 +58,10 @@ class Output:
         cls._print_separator(length)
 
     @classmethod
-    def print_ending(cls, message, length=40):
-        print()
+    def print_ending(cls, caption, ending, length=40):
         cls._print_separator(length)
-        print("MacGyver".center(length))
-        print("Escape the labyrinth".center(length))
+        print(caption.center(length))
         cls._print_separator(length)
-        for line in message.split("\n"):
+        for line in ending.split("\n"):
             print(line.center(length))
         cls._print_separator(length)
