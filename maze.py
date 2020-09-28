@@ -5,13 +5,14 @@ import os
 import sys
 from image import Image
 
+
 class Maze:
 
     MIN_WIDTH, MAX_WIDTH = 0, 14
     MIN_HEIGHT, MAX_HEIGHT = 0, 14
     WIDTH, HEIGHT = 15, 15
-    WALL = "Wall"
-    PATH = "Path"
+    WALL = "wall"
+    PATH = "path"
     START = "MacGyver"
     EXIT = "Guardian"
     zones = {}
@@ -21,10 +22,10 @@ class Maze:
         wall_position = 9, 11
         path_position = 0, 2
         crop_width, crop_height = 20, 20
-        self.wall_image, self.wall_rect = Image.load_crop("floor-tiles-20x20.png",
-            wall_position, crop_width, crop_height)
-        self.path_image, self.path_rect = Image.load_crop("floor-tiles-20x20.png",
-            path_position, crop_width, crop_height)
+        self.wall_image, self.wall_rect = Image.load_crop(
+            "floor-tiles-20x20.png", wall_position, crop_width, crop_height)
+        self.path_image, self.path_rect = Image.load_crop(
+            "floor-tiles-20x20.png", path_position, crop_width, crop_height)
         self._init_zones()
 
     @classmethod
@@ -47,7 +48,8 @@ class Maze:
         subdirectory = "config"
         configuration_file = "maze.txt"
         working_directory = os.path.dirname(__file__)
-        configuration_file = os.path.join(working_directory, subdirectory, configuration_file)
+        configuration_file = os.path.join(working_directory, subdirectory,
+                                          configuration_file)
         try:
             with open(configuration_file, 'r') as config_file:
                 for line_number, line in enumerate(config_file):
@@ -58,22 +60,24 @@ class Maze:
                                 structure = structure_key
                                 break
                         if structure != "Unknown":
-                            cls.zones[(char_number, line_number - 1)] = structure
+                            cls.zones[(char_number, line_number-1)] = structure
                             counters[structure] += 1
         except FileNotFoundError:
             print("The configuration file was not found:", configuration_file)
             sys.exit()
         except PermissionError:
-            print("You don't have the adequate rights to read the configuration file:",
-            configuration_file)
+            print("You don't have the adequate rights to read "
+                  "the configuration file:", configuration_file)
             sys.exit()
         else:
-            if (counters[cls.START] < 1 or counters[cls.EXIT] < 1 or counters[cls.PATH] < 3):
+            if (counters[cls.START] < 1 or counters[cls.EXIT] < 1 or
+               counters[cls.PATH] < 3):
                 try:
                     raise RuntimeError("The configuration file is corrupted:",
-                        format(configuration_file))
+                                       configuration_file)
                 except RuntimeError:
-                    print("The configuration file is corrupted:", format(configuration_file))
+                    print("The configuration file is corrupted:",
+                          configuration_file)
                     sys.exit()
 
     @classmethod
@@ -86,4 +90,5 @@ class Maze:
 
     @classmethod
     def free_paths(cls):
-        return [coordinates for coordinates in cls.zones if cls.zones[coordinates] == cls.PATH]
+        return [coordinates for coordinates in cls.zones
+                if cls.zones[coordinates] == cls.PATH]

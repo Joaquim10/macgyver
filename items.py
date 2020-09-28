@@ -5,6 +5,7 @@ import random
 from item import Item
 from maze import Maze
 
+
 class Items:
 
     free_paths = []
@@ -13,7 +14,8 @@ class Items:
 
     def __init__(self):
         self.items_in_backpack = 0
-        self.syringe = Item("syringe", "seringue.png", "an epidermic syringe", quality="crafted")
+        self.syringe = Item("syringe", "seringue.png", "an epidermic syringe")
+        self.syringe.quality = "crafted"
         self.drop()
 
     def drop(self):
@@ -29,7 +31,7 @@ class Items:
                 "description": "a little plastic tube"
             },
             "ether": {
-            "image": "ether.png",
+                "image": "ether.png",
                 "description": "some ether"
             }
         }
@@ -38,7 +40,7 @@ class Items:
         for name in items:
             location = random.choice(self.free_paths)
             item = Item(name, items[name]["image"], items[name]["description"],
-                location, "material")
+                        location)
             self.loot.append(item)
             self.free_paths.remove(location)
 
@@ -51,6 +53,7 @@ class Items:
 
     def craft(self):
         for material in self.backpack:
-            material.quality = "destroyed"
+            if material.quality == "material":
+                material.quality = "destroyed"
         self.items_in_backpack = 0
         self.pick_up(self.syringe)

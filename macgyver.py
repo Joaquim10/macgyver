@@ -4,6 +4,7 @@
 from maze import Maze
 from image import Image
 
+
 class MacGyver:
 
     def __init__(self):
@@ -13,4 +14,5 @@ class MacGyver:
 
     def move(self, position):
         self.position = x_coordinate, y_coordinate = position
-        self.rect.topleft = x_coordinate * self.rect.w, y_coordinate * self.rect.h
+        self.rect.x = x_coordinate * self.rect.width
+        self.rect.y = y_coordinate * self.rect.height

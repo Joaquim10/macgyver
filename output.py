@@ -5,13 +5,14 @@ import os
 from maze import Maze
 from items import Items
 
+
 class Output:
 
     @staticmethod
     def _clear_console():
-        if os.name in ('nt','dos'):
+        if os.name in ("nt", "dos"):
             os.system("cls")
-        elif os.name in ('linux','osx','posix'):
+        elif os.name in ("linux", "osx", "posix"):
             os.system("clear")
         else:
             print("\n" * 120)
@@ -49,11 +50,13 @@ class Output:
         # Print MacGyver current position and counter and items in backpack
         left_column = "Backpack - {} item(s):".format(items_in_backpack)
         length_column = len(left_column)
-        right_column = "Macgyver {}".format(macgyver_position).rjust(length-length_column)
+        right_column = "Macgyver {}".format(macgyver_position).rjust(
+            length - length_column)
         print("{}{}".format(left_column, right_column))
         for item in Items.backpack:
             left_column = "- {}".format(item.name.capitalize())
-            right_column = "[{}]".format(item.quality).rjust(length_column-len(left_column))
+            right_column = "[{}]".format(item.quality).rjust(
+                length_column - len(left_column))
             print("{}{}".format(left_column, right_column))
         cls._print_separator(length)
 
