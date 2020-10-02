@@ -8,7 +8,7 @@ from maze import Maze
 from macgyver import MacGyver
 from guardian import Guardian
 from items import Items
-from output import Output
+from cliinterface import CliInterface
 from pginterface import PgInterface
 
 
@@ -127,22 +127,22 @@ class Escape:
                 self.game_status = "game lost"
         self.update_sprite(origin, destination)
         if Const.CLI_INTERFACE:
-            Output.print_interface(self.macgyver.position,
-                                   self.items.items_in_backpack)
+            CliInterface.print_interface(self.macgyver.position,
+                                         self.items.items_in_backpack)
         if self.game_status in ["game won", "game lost"]:
             ending = Const.ENDINGS[self.game_status]
             message = "Press SPACE bar or ESCAPE to quit."
             self.update_ending_screen(ending, message)
             if Const.CLI_INTERFACE:
-                Output.print_ending(Const.CAPTION,
-                                    Const.ENDINGS[self.game_status])
+                CliInterface.print_ending(Const.CAPTION,
+                                          Const.ENDINGS[self.game_status])
 
     def run(self):
         # Display all the maze and all the sprites
         self.display_maze_panel()
         if Const.CLI_INTERFACE:
-            Output.print_interface(self.macgyver.position,
-                                   self.items.items_in_backpack)
+            CliInterface.print_interface(self.macgyver.position,
+                                         self.items.items_in_backpack)
         # Event loop
         while self.game_status not in ["game canceled", "game over"]:
             for event in pygame.event.get():
@@ -165,7 +165,8 @@ class Escape:
                             # Update all the altered parts of the screen
                             self.display_dirty_rects()
         if Const.CLI_INTERFACE and self.game_status == "game canceled":
-            Output.print_ending(Const.CAPTION, Const.ENDINGS[self.game_status])
+            CliInterface.print_ending(Const.CAPTION,
+                                      Const.ENDINGS[self.game_status])
 
 
 if __name__ == "__main__":

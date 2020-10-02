@@ -8,7 +8,7 @@ from maze import Maze
 from items import Items
 
 
-class Output:
+class CliInterface:
 
     @staticmethod
     def _clear_console():
