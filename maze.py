@@ -14,13 +14,13 @@ class Maze:
 
     def __init__(self, image_size):
         self.wall_image = PgImage.load_crop("floor-tiles-20x20.png",
-                                          Const.CROP_WALL_POSITION,
-                                          Const.CROP_SIZE,
-                                          image_size)
+                                            Const.CROP_WALL_POSITION,
+                                            Const.CROP_SIZE,
+                                            image_size)
         self.path_image = PgImage.load_crop("floor-tiles-20x20.png",
-                                          Const.CROP_PATH_POSITION,
-                                          Const.CROP_SIZE,
-                                          image_size)
+                                            Const.CROP_PATH_POSITION,
+                                            Const.CROP_SIZE,
+                                            image_size)
         self._init_zones()
 
     @classmethod
