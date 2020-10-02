@@ -3,11 +3,11 @@
 
 from const import Const
 from maze import Maze
-from image import Image
+from pgimage import PgImage
 
 
 class Guardian:
 
     def __init__(self, image_size):
         self.position = Maze.location(Const.MAZE_EXIT)
-        self.image = Image.load("Gardien.png", image_size)
+        self.image = PgImage.load("Gardien.png", image_size)

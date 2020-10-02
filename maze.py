@@ -5,7 +5,7 @@ import os
 import sys
 
 from const import Const
-from image import Image
+from pgimage import PgImage
 
 
 class Maze:
@@ -13,11 +13,11 @@ class Maze:
     zones = {}
 
     def __init__(self, image_size):
-        self.wall_image = Image.load_crop("floor-tiles-20x20.png",
+        self.wall_image = PgImage.load_crop("floor-tiles-20x20.png",
                                           Const.CROP_WALL_POSITION,
                                           Const.CROP_SIZE,
                                           image_size)
-        self.path_image = Image.load_crop("floor-tiles-20x20.png",
+        self.path_image = PgImage.load_crop("floor-tiles-20x20.png",
                                           Const.CROP_PATH_POSITION,
                                           Const.CROP_SIZE,
                                           image_size)

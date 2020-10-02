@@ -9,7 +9,7 @@ import pygame
 from const import Const
 
 
-class Image:
+class PgImage:
 
     @staticmethod
     def _full_name(file_name):

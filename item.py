@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 
-from image import Image
+from pgimage import PgImage
 
 
 class Item:
@@ -16,7 +16,7 @@ class Item:
             self.position = kwargs["position"]
         else:
             self.position = (-1, -1)
-        self.image = Image.load(kwargs["image_file"], kwargs["image_size"])
+        self.image = PgImage.load(kwargs["image_file"], kwargs["image_size"])
         if "quality" in kwargs:
             self.quality = kwargs["quality"]
         else:
