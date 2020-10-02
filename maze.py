@@ -3,53 +3,43 @@
 
 import os
 import sys
+
+from const import Const
 from image import Image
 
 
 class Maze:
 
-    MIN_WIDTH, MAX_WIDTH = 0, 14
-    MIN_HEIGHT, MAX_HEIGHT = 0, 14
-    WIDTH, HEIGHT = 15, 15
-    WALL = "wall"
-    PATH = "path"
-    START = "MacGyver"
-    EXIT = "Guardian"
     zones = {}
 
-    def __init__(self):
-        # Crop (0...19, 0...12)
-        wall_position = 9, 11
-        path_position = 0, 2
-        crop_width, crop_height = 20, 20
-        self.wall_image, self.wall_rect = Image.load_crop(
-            "floor-tiles-20x20.png", wall_position, crop_width, crop_height)
-        self.path_image, self.path_rect = Image.load_crop(
-            "floor-tiles-20x20.png", path_position, crop_width, crop_height)
+    def __init__(self, image_size):
+        self.wall_image = Image.load_crop("floor-tiles-20x20.png",
+                                          Const.CROP_WALL_POSITION,
+                                          Const.CROP_SIZE,
+                                          image_size)
+        self.path_image = Image.load_crop("floor-tiles-20x20.png",
+                                          Const.CROP_PATH_POSITION,
+                                          Const.CROP_SIZE,
+                                          image_size)
         self._init_zones()
 
     @classmethod
     def _init_zones(cls):
-
         structures = {
-            cls.WALL: "#",
-            cls.PATH: " ",
-            cls.START: "?",
-            cls.EXIT: "!"
+            Const.MAZE_WALL: "#",
+            Const.MAZE_PATH: " ",
+            Const.MAZE_START: "?",
+            Const.MAZE_EXIT: "!"
         }
-
         counters = {
-            cls.WALL: 0,
-            cls.PATH: 0,
-            cls.START: 0,
-            cls.EXIT: 0
+            Const.MAZE_WALL: 0,
+            Const.MAZE_PATH: 0,
+            Const.MAZE_START: 0,
+            Const.MAZE_EXIT: 0
         }
-
-        subdirectory = "config"
-        configuration_file = "maze.txt"
         working_directory = os.path.dirname(__file__)
-        configuration_file = os.path.join(working_directory, subdirectory,
-                                          configuration_file)
+        configuration_file = os.path.join(working_directory, Const.CONFIG_DIR,
+                                          Const.CONFIG_FILE)
         try:
             with open(configuration_file, 'r') as config_file:
                 for line_number, line in enumerate(config_file):
@@ -70,8 +60,9 @@ class Maze:
                   "the configuration file:", configuration_file)
             sys.exit()
         else:
-            if (counters[cls.START] < 1 or counters[cls.EXIT] < 1 or
-               counters[cls.PATH] < 3):
+            if (counters[Const.MAZE_START] < 1 or
+                    counters[Const.MAZE_EXIT] < 1 or
+                    counters[Const.MAZE_PATH] < 3):
                 try:
                     raise RuntimeError("The configuration file is corrupted:",
                                        configuration_file)
@@ -91,4 +82,13 @@ class Maze:
     @classmethod
     def free_paths(cls):
         return [coordinates for coordinates in cls.zones
-                if cls.zones[coordinates] == cls.PATH]
+                if cls.zones[coordinates] == Const.MAZE_PATH]
+
+    @staticmethod
+    def collision_detected(location):
+        x_coordinate, y_coordinate = location
+        return Maze.zones[location] == Const.MAZE_WALL or \
+            x_coordinate < Const.MAZE_MIN_WIDTH or \
+            x_coordinate > Const.MAZE_WIDTH - 1 or \
+            y_coordinate < Const.MAZE_MIN_HEIGHT or \
+            y_coordinate > Const.MAZE_HEIGHT - 1

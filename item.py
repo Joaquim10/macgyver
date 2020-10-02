@@ -7,11 +7,17 @@ from image import Image
 
 class Item:
 
-    def __init__(self, name, image, description="", position=(-1, -1)):
-        self.name = name
-        self.description = description
-        self.position = x_coordinate, y_coordinate = position
-        self.quality = "material"
-        self.image, self.rect = Image.load(image)
-        self.rect.x = x_coordinate * self.rect.width
-        self.rect.y = y_coordinate * self.rect.height
+    def __init__(self, **kwargs):
+        """def __init__(self, name, description, image_file, image_size,
+                        position=(-1, -1), quality="material"):"""
+        self.name = kwargs["name"]
+        self.description = kwargs["description"]
+        if "position" in kwargs:
+            self.position = kwargs["position"]
+        else:
+            self.position = (-1, -1)
+        self.image = Image.load(kwargs["image_file"], kwargs["image_size"])
+        if "quality" in kwargs:
+            self.quality = kwargs["quality"]
+        else:
+            self.quality = "material"
