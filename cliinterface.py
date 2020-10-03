@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!./env/bin/python python3.7
 # -*- coding: UTF-8 -*-
 
 import os
