@@ -1,4 +1,4 @@
-#!./env/bin/python python3
+#!./env/bin/python python3.7
 # -*- coding: UTF-8 -*-
 
 import pygame
@@ -21,7 +21,8 @@ class Escape:
         pygame.init()
         # Initialize display
         self.screen = pygame.display.set_mode((Const.SCREEN_WIDTH,
-                                               Const.SCREEN_HEIGHT))
+                                              Const.SCREEN_HEIGHT),
+                                              Const.FULLSCREEN)
         pygame.display.set_caption(Const.CAPTION)
         # Initialize Pygame interface
         self.pgi = PgInterface()

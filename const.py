@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!./env/bin/python python3.7
 # -*- coding: UTF-8 -*-
 
 import pygame
@@ -10,7 +10,11 @@ class Const:
     CAPTION = "MagGyver - Escape the labyrinth"
     SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
 
-    CLI_INTERFACE = True
+    # Enable Windowed mode / Fullscreen
+    FULLSCREEN = 0  # 0 | pygame.FULLSCREEN
+
+    # Enable / Disable command line interface
+    CLI_INTERFACE = False
 
     # Directories
     RESSOURCE_DIR = "ressource"
@@ -25,12 +29,13 @@ class Const:
     MAZE_START = "MacGyver"
     MAZE_EXIT = "Guardian"
 
-    # "floor-tiles-20x20.png"
-    # Crop (0...19, 0...12)
+    # Images for the maze tiles
+    # (0...19, 0...12)
     CROP_WALL_POSITION = 9, 11
     CROP_PATH_POSITION = 0, 2
     CROP_SIZE = 20, 20
 
+    # Hotkeys
     HOTKEYS = {
         "move left": pygame.K_LEFT,
         "move right": pygame.K_RIGHT,
@@ -40,7 +45,7 @@ class Const:
         "validate": pygame.K_SPACE
     }
 
-    # End of game
+    # End of game display
     ENDINGS = {
         "game won":
             "The guardian bars the exit of the maze.\n\n"
@@ -60,7 +65,7 @@ class Const:
             "Game over !"
     }
 
-    # Bars sizes, in number of tiles
+    # Bars sizes (in number of tiles)
     BACKPACK_BAR_WIDTH = 1
     BACKPACK_BAR_HEIGHT = 4
     LOG_BAR_HEIGHT = 1
