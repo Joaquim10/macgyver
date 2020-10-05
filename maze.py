@@ -1,6 +1,20 @@
-#!./env/bin/python python3.7
+#!/bin/python/env python3
 # -*- coding: UTF-8 -*-
+"""
 
+maze: maze contains the class Maze.
+
+Classes:
+    Maze: The Maze object represents the labyrinth.
+
+Methods:
+    location(structure):
+        Returns the coordinates of the first specified structure found.
+    free_paths():
+        Returns the list of coordinates of the paths of the labyrinth.
+    collision_detected(location):
+        Checks for collision detection.
+"""
 import os
 import sys
 
@@ -9,7 +23,21 @@ from pgimage import PgImage
 
 
 class Maze:
+    """
 
+    The Maze object represents the labyrinth.
+
+    Args:
+
+    Class attributes:
+        zones (dict): Dictionnary of the zones of the labyrinth.
+        The keys are couples of tuples as coordinates of the zone and the
+        values are strings as the types of structures of the zone.
+
+    Attributes:
+        wall_image (Surface): Image of a wall tile.
+        path_image (Surface): Image of a path.
+    """
     zones = {}
 
     def __init__(self, image_size):
@@ -25,6 +53,13 @@ class Maze:
 
     @classmethod
     def _init_zones(cls):
+        """
+
+        Initializes the zones of the labyrinth.
+
+        Opens the configuration file, initializes the zones of the labyrinth
+        and checks for errors. If an error is found, the program exits.
+        """
         structures = {
             Const.MAZE_WALL: "#",
             Const.MAZE_PATH: " ",
@@ -60,7 +95,8 @@ class Maze:
                   "the configuration file:", configuration_file)
             sys.exit()
         else:
-            if (counters[Const.MAZE_START] < 1 or
+            if (len(cls.zones) != Const.MAZE_WIDTH * Const.MAZE_HEIGHT or
+                    counters[Const.MAZE_START] < 1 or
                     counters[Const.MAZE_EXIT] < 1 or
                     counters[Const.MAZE_PATH] < 3):
                 try:
@@ -73,6 +109,16 @@ class Maze:
 
     @classmethod
     def location(cls, structure):
+        '''
+
+        Returns the coordinates of the first specified structure found.
+
+            Args:
+                structure (string): The structure which coordinates are needed.
+
+            Returns:
+                The coordinates of the first specified structure found.
+        '''
         for coordinates in cls.zones:
             if cls.zones[coordinates] == structure:
                 location = coordinates
@@ -81,11 +127,25 @@ class Maze:
 
     @classmethod
     def free_paths(cls):
+        '''Returns the list of coordinates of the paths of the labyrinth.'''
         return [coordinates for coordinates in cls.zones
                 if cls.zones[coordinates] == Const.MAZE_PATH]
 
     @staticmethod
     def collision_detected(location):
+        '''
+
+        Checks for collision detection.
+
+            Args:
+                location (tuples): The coordinates of a location in the
+                labyrinth.
+
+            Returns:
+                Retuns True if the specified location is a wall or if the
+                coordinates are out of the labyrinth.
+                Returns False for any other case.
+        '''
         x_coordinate, y_coordinate = location
         return Maze.zones[location] == Const.MAZE_WALL or \
             x_coordinate < Const.MAZE_MIN_WIDTH or \

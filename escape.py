@@ -1,6 +1,26 @@
-#!./env/bin/python python3.7
+#!/bin/python/env python3
 # -*- coding: UTF-8 -*-
+"""
 
+escape: escape is the main module and contains the class Escape.
+
+Classes:
+    Escape: The Escape object runs the game.
+
+Methods:
+    command(key): Returns the command corresponding to the keyboard key
+    pressed by the player.
+    destination(command): Returns the coordinates of the destination
+    corresponding to MacGyver's move.
+    display_maze_panel(): Update and displays the maze panel.
+    update_sprite(origin, destination): Update MacGyver's sprite.
+    update_backpack_bar(): Update the backpack bar and the dirty rects.
+    update_log_bar(message):
+    update_ending_screen(ending, message): Updates the ending screen.
+    display_dirty_rects(): display all the altered parts of the screen
+    move(destination): Moves MacGyver to destination and perform his actions.
+    run(): Runs the game.
+"""
 import pygame
 
 from const import Const
@@ -13,7 +33,25 @@ from pginterface import PgInterface
 
 
 class Escape:
+    """
 
+    The Escape object initializes and runs the game.
+
+    Args:
+
+    Class attributes:
+        dirty_rects (list): List of Rects used to update the altered areas of
+        the screen.
+
+    Attributes:
+        screen (Surface): The display Surface.
+        pgi (PgInterface): The Pygame interface.
+        game_status (string): The status of the game.
+        maze (Maze): Represents the labyrinth.
+        macgyver (MacGyver): Represents MacGyver.
+        guardian (Guardian): Represents the Guardian.
+        items (Items): Handles with items.
+    """
     dirty_rects = []
 
     def __init__(self):
@@ -35,6 +73,18 @@ class Escape:
 
     @staticmethod
     def command(key):
+        '''
+
+        Returns the command corresponding to the keyboard key pressed by the
+        player.
+
+            Args:
+                key (int): The key pressed by the player.
+
+            Returns:
+                The command corresponding to the keyboard key pressed by the
+                player.
+        '''
         command = "unknown"
         for kb_command in Const.HOTKEYS:
             if key == Const.HOTKEYS[kb_command]:
@@ -43,6 +93,18 @@ class Escape:
         return command
 
     def destination(self, command):
+        '''
+
+        Returns the coordinates of the destination corresponding to MacGyver's
+        move.
+
+            Args:
+                command (string): The command is MacGyver's move action.
+
+            Returns:
+                The coordinates of the destination corresponding to MacGyver's
+                move.
+        '''
         x_coordinate, y_coordinate = self.macgyver.position
         if command == "move left":
             x_coordinate -= 1
@@ -55,12 +117,29 @@ class Escape:
         return x_coordinate, y_coordinate
 
     def display_maze_panel(self):
+        '''Update and displays the maze panel.'''
         self.pgi.blit_maze_panel(self.maze, self.macgyver, self.guardian,
                                  self.items)
         self.screen.blit(self.pgi.maze_panel, self.pgi.maze_rect)
         pygame.display.update(self.pgi.maze_rect)
 
     def update_sprite(self, origin, destination):
+        '''
+
+        Update MacGyver's sprite.
+
+        This method blits a path image at the source and destination positions
+        in the labyrinth translated to the screen. MacGyver's image is then
+        blited at destination position in the labyrinth translated to the
+        screen unless game is lost. If game is lost, it's the Guardian's image
+        which is blited. The dirty rects are updated for both blits.
+
+            Args:
+                origin (tuples): MacGyver's current coordinates in the
+                    labyrinth.
+                destination (tuples): Coordinates of the destination of
+                    MacGyver's move in the labyrinth.
+        '''
         # Blit a path at origin
         rect = self.pgi.abs_translate(origin)
         self.screen.blit(self.maze.path_image, rect)
@@ -77,16 +156,38 @@ class Escape:
         self.dirty_rects.append(rect)
 
     def update_backpack_bar(self):
+        '''Update the backpack bar and the dirty rects.'''
         self.pgi.blit_backpack_bar(Items.backpack)
         self.screen.blit(self.pgi.backpack_bar, self.pgi.backpack_rect)
         self.dirty_rects.append(self.pgi.backpack_rect)
 
     def update_log_bar(self, message):
+        '''
+
+        Update the log bar with a message and the dirty rects.
+
+            Args:
+                message (string): The message to be displayed in the log bar.
+
+        '''
         self.pgi.blit_log_bar(message)
         self.screen.blit(self.pgi.log_bar, self.pgi.log_rect)
         self.dirty_rects.append(self.pgi.log_rect)
 
     def update_ending_screen(self, ending, message):
+        '''
+        Updates the ending screen.
+
+        This method clears the log bar and updates the maze panel as
+        background with the ending text and message writed on it. The dirty
+        rects are updated.
+
+            Args:
+                ending (string): The ending text to be displayed.
+                message (string): The message to be displayed at the end of
+                the ending text.
+
+        '''
         # Clear logs
         self.pgi.clear_log_bar()
         self.screen.blit(self.pgi.log_bar, self.pgi.log_rect)
@@ -101,11 +202,28 @@ class Escape:
         self.dirty_rects.append(self.pgi.maze_rect)
 
     def display_dirty_rects(self):
-        # Update all the altered parts of the screen
+        """display all the altered parts of the screen"""
         pygame.display.update(self.dirty_rects)
         self.dirty_rects.clear()
 
     def move(self, destination):
+        '''
+        Moves MacGyver to destination and perform his actions.
+
+        This method moves Macgyver to his destination.
+        If there is an item at destination, MacGyver gets it, and if MacGyver
+        has tree items, he crafts the syringe and the other items are lost.
+        In theese cases, the back pack bar and the log bar are updated.
+        If the Guardian is at destination, the game status is updated.
+        The MacGyver's sprite is then updated and the command line interface
+        is printed if needed.
+        If game is ending, the ending screen is updated and printed on the
+        command line interface if needed.
+
+            Args:
+                destination (tuples): Coordinates of the destination of
+                    MacGyver in the labyrinth.
+        '''
         origin = self.macgyver.position
         self.macgyver.move(destination)
         for item in Items.materials:
@@ -139,6 +257,17 @@ class Escape:
                                           Const.ENDINGS[self.game_status])
 
     def run(self):
+        '''
+        Runs the game.
+
+        This method displays the labyrinth and print the command line
+        interface if needed. An event loop is then processed until game is
+        over or canceled. On a keydown event, the key pressed gives a command
+        who is processed. If the player tries to move and there is no
+        collision detected, MacGyver moves to his destination. At last, all
+        the altered parts of the screen are displayed.
+
+        '''
         # Display all the maze and all the sprites
         self.display_maze_panel()
         if Const.CLI_INTERFACE:
@@ -163,7 +292,7 @@ class Escape:
                         if not self.maze.collision_detected(destination):
                             # MacGyver moves
                             self.move(destination)
-                            # Update all the altered parts of the screen
+                            # Display all the altered parts of the screen
                             self.display_dirty_rects()
         if Const.CLI_INTERFACE and self.game_status == "game canceled":
             CliInterface.print_ending(Const.CAPTION,
