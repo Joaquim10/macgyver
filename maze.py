@@ -15,6 +15,7 @@ Methods:
     collision_detected(location):
         Checks for collision detection.
 """
+
 import os
 import sys
 
@@ -27,16 +28,14 @@ class Maze:
 
     The Maze object represents the labyrinth.
 
-    Args:
-
     Class attributes:
-        zones (dict): Dictionnary of the zones of the labyrinth.
-        The keys are couples of tuples as coordinates of the zone and the
-        values are strings as the types of structures of the zone.
+        zones (dict [tuples, str]): Dictionnary of the zones of the labyrinth.
+        The keys are the coordinates of the zone and the values are the types
+        of structures of the zones.
 
     Attributes:
-        wall_image (Surface): Image of a wall tile.
-        path_image (Surface): Image of a path.
+        wall_image (pygame.Surface): Image of a wall tile.
+        path_image (pygame.Surface): Image of a path.
     """
     zones = {}
 
@@ -114,9 +113,10 @@ class Maze:
         Returns the coordinates of the first specified structure found.
 
             Args:
-                structure (string): The structure which coordinates are needed.
+                structure (str): The structure which coordinates are needed.
 
             Returns:
+                location (tuples):
                 The coordinates of the first specified structure found.
         '''
         for coordinates in cls.zones:
@@ -142,6 +142,7 @@ class Maze:
                 labyrinth.
 
             Returns:
+                collision_detected (bool)
                 Retuns True if the specified location is a wall or if the
                 coordinates are out of the labyrinth.
                 Returns False for any other case.

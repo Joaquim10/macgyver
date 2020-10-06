@@ -24,7 +24,7 @@ class Guardian:
 
     Attributes:
         position (tuples): Coordinates of the Guardian in the labyrinth.
-        image (Surface): Image of the Guardian.
+        image (pygame.Surface): Image of the Guardian.
     """
     def __init__(self, image_size):
         self.position = Maze.location(Const.MAZE_EXIT)

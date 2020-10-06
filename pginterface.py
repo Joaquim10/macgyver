@@ -1,5 +1,34 @@
-#!./env/bin/python python3.7
+#!/bin/python/env python3
 # -*- coding: UTF-8 -*-
+"""
+
+pginterface: pginterface contains the class PgInterface.
+
+Classes:
+    PgImnterface: The PgInterface object initializes and blits panels and
+    bars.
+
+Methods:
+    translate(position):
+        Translates the specified position in the labyrinth to the relative
+        coordinates in a surface.
+    abs_translate(position):
+        Translates the specified position in the labyrinth to the
+        corresponding rect in the display surface.
+    blit_maze_panel(maze, macgyver, guardian, items):
+        Blits the maze panel with all walls, paths, items and caracters images.
+    blit_backpack_bar(backpack):
+        Blits the backpack bar with all MacGyver's carryed items images.
+    clear_log_bar():
+        Clears the log bar.
+    blit_log_bar(message):
+        Blits the log bar with a message.
+    blit_ending_screen(ending, message):
+        Darken and blits the maze panel with the ending text followed by a
+        message with different colors.
+    redden(image):
+        Redden and return a surface.
+"""
 
 import pygame
 
@@ -8,7 +37,19 @@ from maze import Maze
 
 
 class PgInterface:
+    """
 
+    The PgInterface object initializes and blits panels and bars.
+
+    Attributes:
+        tile_side (int): The width or height of the squared tiles.
+        maze_panel (pygame.Surface) : The maze panel surface.
+        maze_rect (pygame.Rect) : The maze panel rect.
+        backpack_bar (pygame.Surface) : The backpack bar surface.
+        self.backpack_rect (pygame.Rect) : The backpack bar rect.
+        log_bar (pygame.Surface) : The log bar surface.
+        log_rect (pygame.Rect) : The log bar rect.
+    """
     def __init__(self):
         # Initialize tiles size
         self.tile_side = self._tile_side()
@@ -19,12 +60,18 @@ class PgInterface:
 
     @staticmethod
     def _tile_side():
+        """Returns the side of the squared tiles witch best fits the display
+        surface.
+        """
         return min(Const.SCREEN_WIDTH // (Const.MAZE_WIDTH +
                    Const.BACKPACK_BAR_WIDTH * 2),
                    Const.SCREEN_HEIGHT // (Const.MAZE_HEIGHT +
                    Const.LOG_BAR_HEIGHT))
 
     def _maze_panel(self):
+        """Returns the maze panel surface and rect witch best fits the display
+        surface.
+        """
         width = Const.MAZE_WIDTH * self.tile_side
         height = Const.MAZE_HEIGHT * self.tile_side
         x_coordinate = (Const.SCREEN_WIDTH - width) // 2
@@ -35,6 +82,9 @@ class PgInterface:
         return maze_panel, maze_rect
 
     def _backpack_bar(self):
+        """Returns the backpack bar surface and rect witch best fits the
+        display surface.
+        """
         width = self.tile_side * Const.BACKPACK_BAR_WIDTH
         height = self.tile_side * Const.BACKPACK_BAR_HEIGHT
         x_coordinate = self.maze_rect.x - self.tile_side - 1
@@ -44,6 +94,9 @@ class PgInterface:
         return backpack_panel, backpack_rect
 
     def _log_bar(self):
+        """Returns the log bar surface and rect witch best fits the display
+        surface.
+        """
         width = Const.MAZE_WIDTH * self.tile_side
         height = self.tile_side * Const.LOG_BAR_HEIGHT
         x_coordinate = (Const.SCREEN_WIDTH - width) // 2
@@ -53,18 +106,55 @@ class PgInterface:
         return log_bar, log_rect
 
     def translate(self, position):
+        '''
+
+        Translates the specified position in the labyrinth to the relative
+        coordinates in a surface.
+
+            Args:
+                position (tuples): The coordinates of the position in the
+                labyrinth.
+
+            Returns:
+                x_coordinate (tuple), y_coordinate (tuple):
+                The relative coordinates of the position in a surface.
+        '''
         x_coordinate, y_coordinate = position
         x_coordinate *= self.tile_side
         y_coordinate *= self.tile_side
         return x_coordinate, y_coordinate
 
     def abs_translate(self, position):
+        '''
+
+        Translates the specified position in the labyrinth to the
+        corresponding rect in the display surface.
+
+            Args:
+                position (tuples): The coordinates of the position in the
+                labyrinth.
+
+            Returns:
+                rect (pygame.Rect)
+                The rect in the display surface cooresponding to the specified
+                position in the labyrinth.
+        '''
         position = self.translate(position)
         rect = pygame.Rect(position, (self.tile_side, self.tile_side))
         return rect.move(self.maze_rect.x, self.maze_rect.y)
 
     def blit_maze_panel(self, maze, macgyver, guardian, items):
-        # Display maze background
+        '''
+        Blits the maze panel with all walls, paths, items and caracters
+        images.
+
+            Args:
+                maze (maze.Maze): The maze object.
+                macgyver (macgyver.MacGyver): MacGyver object.
+                guardian (guardian.Guardian): Guardian object.
+                items (items.Items): Item object.
+        '''
+        # Blit the maze background
         for y_coordinate in range(Const.MAZE_MIN_HEIGHT, Const.MAZE_HEIGHT):
             for x_coordinate in range(Const.MAZE_MIN_WIDTH, Const.MAZE_WIDTH):
                 position = self.translate((x_coordinate, y_coordinate))
@@ -79,15 +169,28 @@ class PgInterface:
         self.maze_panel.blit(macgyver.image, self.translate(macgyver.position))
 
     def blit_backpack_bar(self, backpack):
+        '''
+        Blits the backpack bar with all MacGyver's carryed items images.
+            Args:
+                backpack (list [items.Items]):
+                The list of items to blit their images.
+        '''
         x_coordinate, y_coordinate = 0, 0
         for item in backpack:
             self.backpack_bar.blit(item.image, (x_coordinate, y_coordinate))
             y_coordinate += self.tile_side
 
     def clear_log_bar(self):
+        '''Clears the log bar.'''
         self.log_bar.fill(pygame.Color("black"))
 
     def blit_log_bar(self, message):
+        '''
+        Blits the log bar with a message.
+
+            Args:
+                message (str): the message to be blited.
+        '''
         self.clear_log_bar()
         font = pygame.font.SysFont('Arial', self.tile_side // 2)
         message_surface = font.render(message, True, pygame.Color("white"))
@@ -97,8 +200,20 @@ class PgInterface:
 
     def _blit_ending(self, text, y_position, font,
                      color=pygame.Color("white")):
-        """blit maze image horizontally centered multi-line text
-           (without automatic line feed)"""
+        '''
+        Blits the maze panel with horizontally centered multi-line text.
+           Automatic line feed is not supported.
+
+            Args:
+                text (str) : The text to be blited.
+                y_position (int) : The y_axis coordinate in the maze panel
+                for the beginning of the text.
+
+            Returns:
+                y_position (int):
+                The y_axis coordinate in the maze panel for the text position
+                at the end of the blitting.
+        '''
         lines = text.splitlines()
         for line in lines:
             line_surface = font.render(line, True, color)
@@ -111,6 +226,14 @@ class PgInterface:
         return y_position
 
     def blit_ending_screen(self, ending, message):
+        '''
+        Darken and blits the maze panel with the ending text followed by a
+        message with different colors.
+
+            Args:
+                ending (str) : The text to be first blited.
+                message (str) : The text to be blited after the ending.
+        '''
         self.maze_panel.fill(pygame.Color("gray10"), None, pygame.BLEND_SUB)
         font = pygame.font.SysFont('Arial', self.tile_side * 5 // 6)
         ending += "\n\n"
@@ -122,5 +245,14 @@ class PgInterface:
 
     @staticmethod
     def redden(image):
+        '''
+        Redden and return a surface.
+            Args:
+                image (pygame.Surface) : The image to be redden.
+
+            Returns:
+                image (pygame.Surface)
+                The reddened image.
+        '''
         image.fill(pygame.Color("cyan"), None, pygame.BLEND_SUB)
         return image

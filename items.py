@@ -25,22 +25,17 @@ class Items:
 
     The Items object handles with items.
 
-    free_paths = []
-    materials = []
-    backpack = []
-
     Args:
-        image_size(couple of tuples):
-            Width and height for the images of the items.
+        image_size(tuples): Width and height for the images of the items.
 
     Class attributes:
-        free_paths (list): Coordinates of the free paths.
-        materials (list): Items dropped across the maze.
-        backpack (list): Items in MacGyver's backpack.
+        free_paths (list [tuples]): Coordinates of the free paths.
+        materials (list [items.Items]): Items dropped across the maze.
+        backpack (list [items.Items]): Items in MacGyver's backpack.
 
     Attributes:
         items_in_backpack (int): Counter for items in MacGyver's backpack.
-        syringe (Item): syringue item.
+        syringe (item.Item): syringue item.
     """
     free_paths = []
     materials = []
@@ -111,7 +106,7 @@ class Items:
         backpack, materials and free paths lists.
 
             Args:
-                item (Item): The item got by MacGyver.
+                item (item.Item): The item got by MacGyver.
         '''
         self.backpack.append(item)
         self.items_in_backpack += 1

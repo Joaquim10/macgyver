@@ -2,25 +2,27 @@
 # -*- coding: UTF-8 -*-
 """
 
-escape: escape is the main module and contains the class Escape.
+escape: escape contains the class Escape.
 
 Classes:
     Escape: The Escape object runs the game.
 
 Methods:
     command(key): Returns the command corresponding to the keyboard key
-    pressed by the player.
+        pressed by the player.
     destination(command): Returns the coordinates of the destination
-    corresponding to MacGyver's move.
+        corresponding to MacGyver's move.
     display_maze_panel(): Update and displays the maze panel.
     update_sprite(origin, destination): Update MacGyver's sprite.
     update_backpack_bar(): Update the backpack bar and the dirty rects.
-    update_log_bar(message):
+    update_log_bar(message): Update the log bar with a message and the dirty
+        rects.
     update_ending_screen(ending, message): Updates the ending screen.
-    display_dirty_rects(): display all the altered parts of the screen
+    display_dirty_rects(): Display all the altered parts of the screen.
     move(destination): Moves MacGyver to destination and perform his actions.
     run(): Runs the game.
 """
+
 import pygame
 
 from const import Const
@@ -37,20 +39,18 @@ class Escape:
 
     The Escape object initializes and runs the game.
 
-    Args:
-
     Class attributes:
-        dirty_rects (list): List of Rects used to update the altered areas of
-        the screen.
+        dirty_rects (list [pygame.Rects]): List of Rects used to update the
+        altered areas of the screen.
 
     Attributes:
-        screen (Surface): The display Surface.
-        pgi (PgInterface): The Pygame interface.
-        game_status (string): The status of the game.
-        maze (Maze): Represents the labyrinth.
-        macgyver (MacGyver): Represents MacGyver.
-        guardian (Guardian): Represents the Guardian.
-        items (Items): Handles with items.
+        screen (pygame.Surface): The display Surface.
+        pgi (pginterface.PgInterface): The Pygame interface.
+        game_status (str): The status of the game.
+        maze (maze.Maze): Represents the labyrinth.
+        macgyver (macgyver.MacGyver): Represents MacGyver.
+        guardian (guardian.Guardian): Represents the Guardian.
+        items (items.Items): Handles with items.
     """
     dirty_rects = []
 
@@ -82,8 +82,8 @@ class Escape:
                 key (int): The key pressed by the player.
 
             Returns:
-                The command corresponding to the keyboard key pressed by the
-                player.
+                command (str): The command corresponding to the keyboard key
+                pressed by the player.
         '''
         command = "unknown"
         for kb_command in Const.HOTKEYS:
@@ -102,6 +102,7 @@ class Escape:
                 command (string): The command is MacGyver's move action.
 
             Returns:
+                x_coordinate (tuple), y_coordinate (tuple):
                 The coordinates of the destination corresponding to MacGyver's
                 move.
         '''
@@ -167,7 +168,7 @@ class Escape:
         Update the log bar with a message and the dirty rects.
 
             Args:
-                message (string): The message to be displayed in the log bar.
+                message (str): The message to be displayed in the log bar.
 
         '''
         self.pgi.blit_log_bar(message)
@@ -183,9 +184,9 @@ class Escape:
         rects are updated.
 
             Args:
-                ending (string): The ending text to be displayed.
-                message (string): The message to be displayed at the end of
-                the ending text.
+                ending (str): The ending text to be displayed.
+                message (str): The message to be displayed at the end of the
+                    ending text.
 
         '''
         # Clear logs
@@ -202,7 +203,7 @@ class Escape:
         self.dirty_rects.append(self.pgi.maze_rect)
 
     def display_dirty_rects(self):
-        """display all the altered parts of the screen"""
+        """display all the altered parts of the screen."""
         pygame.display.update(self.dirty_rects)
         self.dirty_rects.clear()
 

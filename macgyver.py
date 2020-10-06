@@ -27,7 +27,7 @@ class MacGyver():
 
     Attributes:
         position (tuples): Coordinates of MacGyver in the labyrinth.
-        image (Surface): Image of MacGyver.
+        image (pygame.Surface): Image of MacGyver.
     """
     def __init__(self, image_size):
         self.position = Maze.location(Const.MAZE_START)
@@ -39,7 +39,7 @@ class MacGyver():
         Moves MacGyver in the labyrinth.
 
             Args:
-                position (couple of tuples):
-                    The new coordinates of MacGyver in the labyrinth.
+                position (tuples): The new coordinates of MacGyver in the
+                labyrinth.
         '''
         self.position = position

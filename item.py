@@ -8,7 +8,6 @@ Classes:
     Item: The Item object represents an item.
 """
 
-
 from pgimage import PgImage
 
 
@@ -19,21 +18,21 @@ class Item:
 
     Args:
         **kwargs: The keyword arguments are used for initializing an item.
-            **"name" (string): Name of the item.
-            **"description" (string): Description of the item.
+            "name" (str): Name of the item.
+            **"description" (str): Description of the item.
             **"position" (tuples, optional): Coordinates of the item in the
                 labyrinth. Default is (-1, -1)
-            **"image_file" (string): File name of the image for the item.
+            **"image_file" (str): File name of the image for the item.
             **"image_size"(tuples): Width and height for the image of the item.
-            **"quality" (string, optional): Quality of the item.
-                Default is "material".
+            **"quality" (str, optional): Quality of the item. Default is
+                "material".
 
     Attributes:
-        name (string): The name of the item.
-        description (string): A description of the item.
+        name (str): The name of the item.
+        description (str): A description of the item.
         position (tuples): Coordinates of the item in the labyrinth.
-        image (surface): Image of the item.
-        quality (string): Quality of the item.
+        image (pygame.Surface): Image of the item.
+        quality (str): Quality of the item.
     """
     def __init__(self, **kwargs):
         self.name = kwargs["name"]
