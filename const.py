@@ -1,8 +1,5 @@
-#!./env/bin/python python3.7
+#!/bin/python/env python3
 # -*- coding: UTF-8 -*-
-
-import pygame
-
 
 class Const:
 
@@ -31,19 +28,9 @@ class Const:
 
     # Images for the maze tiles
     # (0...19, 0...12)
-    CROP_WALL_POSITION = 9, 11
-    CROP_PATH_POSITION = 0, 2
+    CROP_WALL_POSITION = 7, 11
+    CROP_PATH_POSITION = 7, 2
     CROP_SIZE = 20, 20
-
-    # Hotkeys
-    HOTKEYS = {
-        "move left": pygame.K_LEFT,
-        "move right": pygame.K_RIGHT,
-        "move up": pygame.K_UP,
-        "move down": pygame.K_DOWN,
-        "exit game": pygame.K_ESCAPE,
-        "validate": pygame.K_SPACE
-    }
 
     # End of game display
     ENDINGS = {

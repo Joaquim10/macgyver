@@ -85,9 +85,17 @@ class Escape:
                 command (str): The command corresponding to the keyboard key
                 pressed by the player.
         '''
+        hotkeys = {
+            "move left": pygame.K_LEFT,
+            "move right": pygame.K_RIGHT,
+            "move up": pygame.K_UP,
+            "move down": pygame.K_DOWN,
+            "exit game": pygame.K_ESCAPE,
+            "validate": pygame.K_SPACE
+        }
         command = "unknown"
-        for kb_command in Const.HOTKEYS:
-            if key == Const.HOTKEYS[kb_command]:
+        for kb_command in hotkeys:
+            if key == hotkeys[kb_command]:
                 command = kb_command
                 break
         return command
