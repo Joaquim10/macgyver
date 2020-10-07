@@ -2,10 +2,10 @@
 # -*- coding: UTF-8 -*-
 """
 
-cliinterface: cliinterface contains the class CliInterface.
+clidisplay : clidisplay contains the class CliDisplay .
 
 Classes:
-    CliInterface: The CliInterface prints the game interface on the console.
+    CliDisplay : The CliDisplay  prints the game interface on the console.
 Methods:
     print_interface(macgyver_position, items_in_backpack):
         Prints the game interface on the console.
@@ -15,16 +15,17 @@ Methods:
 
 import os
 
-from const import Const
-from maze import Maze
-from items import Items
+import config.const as const
+from app.maze import Maze
+from app.items import Items
 
 
-class CliInterface:
-    """The CliInterface prints the game interface on the console"""
+class CliDisplay :
+    """The CliDisplay  prints the game interface on the console"""
+
     @staticmethod
     def _clear_console():
-        """Clears the console on any OS."""
+        '''Clears the console on any OS. '''
         if os.name in ("nt", "dos"):
             os.system("cls")
         elif os.name in ("linux", "osx", "posix"):
@@ -34,12 +35,13 @@ class CliInterface:
 
     @staticmethod
     def _print_separator(length=40):
-        """Prints a separator of the specified length."""
+        '''Prints a separator of the specified length.'''
         print("~" * length)
 
     @classmethod
     def print_interface(cls, macgyver_position, items_in_backpack):
-        """
+        '''
+
         Prints the game interface on the command line interface.
 
         Clears the console and prints all the maze structures, the characters
@@ -52,25 +54,26 @@ class CliInterface:
                 ending (str): The text to be printed after the caption.
                 length (int, optional): The length is used to center the text
                     and print separators. By default, length is 40.
-        """
+        '''
         cls._clear_console()
         items_header = "Backpack - {} item(s):".format(items_in_backpack)
         length = len(items_header)
         # Draw maze
-        for y_coordinate in range(Const.MAZE_MIN_HEIGHT, Const.MAZE_HEIGHT):
+        for y_coordinate in range(const.MAZE_MIN_HEIGHT, const.MAZE_HEIGHT):
             line = ""
-            for x_coordinate in range(Const.MAZE_MIN_WIDTH, Const.MAZE_WIDTH):
+            for x_coordinate in range(const.MAZE_MIN_WIDTH, const.MAZE_WIDTH):
                 # Structures
-                if (Maze.zones[x_coordinate, y_coordinate] == Const.MAZE_WALL):
+                if (Maze.zones[x_coordinate, y_coordinate] ==
+                        const.MAZE_WALL):
                     char = "#"
                 elif (Maze.zones[x_coordinate, y_coordinate] ==
-                      Const.MAZE_PATH):
+                      const.MAZE_PATH):
                     char = " "
                 elif (Maze.zones[x_coordinate, y_coordinate] ==
-                      Const.MAZE_START):
+                      const.MAZE_START):
                     char = "?"
                 elif (Maze.zones[x_coordinate, y_coordinate] ==
-                      Const.MAZE_EXIT):
+                      const.MAZE_EXIT):
                     char = "!"
                 # Special locations
                 if (x_coordinate, y_coordinate) == macgyver_position:
@@ -93,7 +96,8 @@ class CliInterface:
 
     @classmethod
     def print_ending(cls, caption, ending, length=40):
-        """
+        '''
+
         Print centered caption and ending text.
 
             Args:
@@ -101,7 +105,7 @@ class CliInterface:
                 ending (str): The text to be printed after the caption.
                 length (int, optional): The length is used to center the text
                     and print separators. By default, length is 40.
-        """
+        '''
         cls._print_separator(length)
         print(caption.center(length))
         cls._print_separator(length)

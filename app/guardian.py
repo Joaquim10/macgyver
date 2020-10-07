@@ -8,9 +8,9 @@ Classes:
     Guardian: The Guardian object represents the Guardian.
 """
 
-from const import Const
-from maze import Maze
-from pgimage import PgImage
+from config.const import MAZE_EXIT
+from app.maze import Maze
+from app.pgimage import PgImage
 
 
 class Guardian:
@@ -27,5 +27,5 @@ class Guardian:
         image (pygame.Surface): Image of the Guardian.
     """
     def __init__(self, image_size):
-        self.position = Maze.location(Const.MAZE_EXIT)
+        self.position = Maze.location(MAZE_EXIT)
         self.image = PgImage.load("Gardien.png", image_size)

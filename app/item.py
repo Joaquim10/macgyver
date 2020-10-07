@@ -8,7 +8,7 @@ Classes:
     Item: The Item object represents an item.
 """
 
-from pgimage import PgImage
+from app.pgimage import PgImage
 
 
 class Item:
@@ -19,12 +19,12 @@ class Item:
     Args:
         **kwargs: The keyword arguments are used for initializing an item.
             "name" (str): Name of the item.
-            **"description" (str): Description of the item.
-            **"position" (tuples, optional): Coordinates of the item in the
-                labyrinth. Default is (-1, -1)
-            **"image_file" (str): File name of the image for the item.
-            **"image_size"(tuples): Width and height for the image of the item.
-            **"quality" (str, optional): Quality of the item. Default is
+            "description" (str): Description of the item.
+            "position" (tuples, optional): Coordinates of the item in the
+                labyrinth. Default is (-1, -1).
+            "image_file" (str): File name of the image for the item.
+            "image_size" (tuples): Width and height for the image of the item.
+            "quality" (str, optional): Quality of the item. Default is
                 "material".
 
     Attributes:

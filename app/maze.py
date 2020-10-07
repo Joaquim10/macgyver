@@ -16,11 +16,12 @@ Methods:
         Checks for collision detection.
 """
 
-import os
 import sys
 
-from const import Const
-from pgimage import PgImage
+import config.const as const
+import config.settings as settings
+from app.tools import Tools
+from app.pgimage import PgImage
 
 
 class Maze:
@@ -40,43 +41,41 @@ class Maze:
     zones = {}
 
     def __init__(self, image_size):
-        self.wall_image = PgImage.load_crop("floor-tiles-20x20.png",
-                                            Const.CROP_WALL_POSITION,
-                                            Const.CROP_SIZE,
+        self.wall_image = PgImage.load_crop(const.TEXTURE_ATLAS,
+                                            const.CROP_WALL_POSITION,
+                                            const.CROP_SIZE,
                                             image_size)
-        self.path_image = PgImage.load_crop("floor-tiles-20x20.png",
-                                            Const.CROP_PATH_POSITION,
-                                            Const.CROP_SIZE,
+        self.path_image = PgImage.load_crop(const.TEXTURE_ATLAS,
+                                            const.CROP_PATH_POSITION,
+                                            const.CROP_SIZE,
                                             image_size)
         self._init_zones()
 
     @classmethod
     def _init_zones(cls):
-        """
+        '''
 
         Initializes the zones of the labyrinth.
 
         Opens the configuration file, initializes the zones of the labyrinth
         and checks for errors. If an error is found, the program exits.
-        """
+        '''
         structures = {
-            Const.MAZE_WALL: "#",
-            Const.MAZE_PATH: " ",
-            Const.MAZE_START: "?",
-            Const.MAZE_EXIT: "!"
+            const.MAZE_WALL: "#",
+            const.MAZE_PATH: " ",
+            const.MAZE_START: "?",
+            const.MAZE_EXIT: "!"
         }
         counters = {
-            Const.MAZE_WALL: 0,
-            Const.MAZE_PATH: 0,
-            Const.MAZE_START: 0,
-            Const.MAZE_EXIT: 0
+            const.MAZE_WALL: 0,
+            const.MAZE_PATH: 0,
+            const.MAZE_START: 0,
+            const.MAZE_EXIT: 0
         }
-        working_directory = os.path.dirname(__file__)
-        configuration_file = os.path.join(working_directory, Const.CONFIG_DIR,
-                                          Const.CONFIG_FILE)
+        maze_file = Tools.full_name(const.MAZES_DIR, settings.MAZE_FILE)
         try:
-            with open(configuration_file, 'r') as config_file:
-                for line_number, line in enumerate(config_file):
+            with open(maze_file, 'r') as tile_set_file:
+                for line_number, line in enumerate(tile_set_file):
                     for char_number, char in enumerate(line):
                         structure = "Unknown"
                         for structure_key in structures:
@@ -87,23 +86,22 @@ class Maze:
                             cls.zones[(char_number, line_number-1)] = structure
                             counters[structure] += 1
         except FileNotFoundError:
-            print("The configuration file was not found:", configuration_file)
+            print("The configuration file was not found:", maze_file)
             sys.exit()
         except PermissionError:
-            print("You don't have the adequate rights to read "
-                  "the configuration file:", configuration_file)
+            print("You don't have the adequate rights to read the maze file:",
+                  maze_file)
             sys.exit()
         else:
-            if (len(cls.zones) != Const.MAZE_WIDTH * Const.MAZE_HEIGHT or
-                    counters[Const.MAZE_START] < 1 or
-                    counters[Const.MAZE_EXIT] < 1 or
-                    counters[Const.MAZE_PATH] < 3):
+            if (len(cls.zones) != const.MAZE_WIDTH * const.MAZE_HEIGHT or
+                    counters[const.MAZE_START] < 1 or
+                    counters[const.MAZE_EXIT] < 1 or
+                    counters[const.MAZE_PATH] < 3):
                 try:
                     raise RuntimeError("The configuration file is corrupted:",
-                                       configuration_file)
+                                       maze_file)
                 except RuntimeError:
-                    print("The configuration file is corrupted:",
-                          configuration_file)
+                    print("The configuration file is corrupted:", maze_file)
                     sys.exit()
 
     @classmethod
@@ -129,7 +127,7 @@ class Maze:
     def free_paths(cls):
         '''Returns the list of coordinates of the paths of the labyrinth.'''
         return [coordinates for coordinates in cls.zones
-                if cls.zones[coordinates] == Const.MAZE_PATH]
+                if cls.zones[coordinates] == const.MAZE_PATH]
 
     @staticmethod
     def collision_detected(location):
@@ -148,8 +146,8 @@ class Maze:
                 Returns False for any other case.
         '''
         x_coordinate, y_coordinate = location
-        return Maze.zones[location] == Const.MAZE_WALL or \
-            x_coordinate < Const.MAZE_MIN_WIDTH or \
-            x_coordinate > Const.MAZE_WIDTH - 1 or \
-            y_coordinate < Const.MAZE_MIN_HEIGHT or \
-            y_coordinate > Const.MAZE_HEIGHT - 1
+        return Maze.zones[location] == const.MAZE_WALL or \
+            x_coordinate < const.MAZE_MIN_WIDTH or \
+            x_coordinate > const.MAZE_WIDTH - 1 or \
+            y_coordinate < const.MAZE_MIN_HEIGHT or \
+            y_coordinate > const.MAZE_HEIGHT - 1

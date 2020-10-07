@@ -32,8 +32,9 @@ Methods:
 
 import pygame
 
-from const import Const
-from maze import Maze
+import config.settings as settings
+import config.const as const
+from app.maze import Maze
 
 
 class PgInterface:
@@ -60,33 +61,30 @@ class PgInterface:
 
     @staticmethod
     def _tile_side():
-        """Returns the side of the squared tiles witch best fits the display
-        surface.
-        """
-        return min(Const.SCREEN_WIDTH // (Const.MAZE_WIDTH +
-                   Const.BACKPACK_BAR_WIDTH * 2),
-                   Const.SCREEN_HEIGHT // (Const.MAZE_HEIGHT +
-                   Const.LOG_BAR_HEIGHT))
+        '''Returns the side of the squared tiles witch best fits the display
+        surface.'''
+        return min(settings.SCREEN_WIDTH // (const.MAZE_WIDTH +
+                                             const.BACKPACK_BAR_WIDTH * 2),
+                   settings.SCREEN_HEIGHT // (const.MAZE_HEIGHT +
+                                              const.LOG_BAR_HEIGHT))
 
     def _maze_panel(self):
-        """Returns the maze panel surface and rect witch best fits the display
-        surface.
-        """
-        width = Const.MAZE_WIDTH * self.tile_side
-        height = Const.MAZE_HEIGHT * self.tile_side
-        x_coordinate = (Const.SCREEN_WIDTH - width) // 2
-        y_coordinate = (Const.SCREEN_HEIGHT - height) // 2 - \
+        '''Returns the maze panel surface and rect witch best fits the display
+        surface.'''
+        width = const.MAZE_WIDTH * self.tile_side
+        height = const.MAZE_HEIGHT * self.tile_side
+        x_coordinate = (settings.SCREEN_WIDTH - width) // 2
+        y_coordinate = (settings.SCREEN_HEIGHT - height) // 2 - \
             self.tile_side // 2
         maze_panel = pygame.Surface((width, height)).convert()
         maze_rect = pygame.Rect(x_coordinate, y_coordinate, width, height)
         return maze_panel, maze_rect
 
     def _backpack_bar(self):
-        """Returns the backpack bar surface and rect witch best fits the
-        display surface.
-        """
-        width = self.tile_side * Const.BACKPACK_BAR_WIDTH
-        height = self.tile_side * Const.BACKPACK_BAR_HEIGHT
+        '''Returns the backpack bar surface and rect witch best fits the
+        display surface.'''
+        width = self.tile_side * const.BACKPACK_BAR_WIDTH
+        height = self.tile_side * const.BACKPACK_BAR_HEIGHT
         x_coordinate = self.maze_rect.x - self.tile_side - 1
         y_coordinate = self.maze_rect.bottom - height
         backpack_panel = pygame.Surface((width, height)).convert()
@@ -94,12 +92,11 @@ class PgInterface:
         return backpack_panel, backpack_rect
 
     def _log_bar(self):
-        """Returns the log bar surface and rect witch best fits the display
-        surface.
-        """
-        width = Const.MAZE_WIDTH * self.tile_side
-        height = self.tile_side * Const.LOG_BAR_HEIGHT
-        x_coordinate = (Const.SCREEN_WIDTH - width) // 2
+        '''Returns the log bar surface and rect witch best fits the display
+        surface.'''
+        width = self.tile_side * const.LOG_BAR_WIDTH
+        height = self.tile_side * const.LOG_BAR_HEIGHT
+        x_coordinate = (settings.SCREEN_WIDTH - width) // 2
         y_coordinate = self.maze_rect.bottom + 1
         log_bar = pygame.Surface((width, height)).convert()
         log_rect = pygame.Rect(x_coordinate, y_coordinate, width, height)
@@ -145,6 +142,7 @@ class PgInterface:
 
     def blit_maze_panel(self, maze, macgyver, guardian, items):
         '''
+
         Blits the maze panel with all walls, paths, items and caracters
         images.
 
@@ -155,10 +153,10 @@ class PgInterface:
                 items (items.Items): Item object.
         '''
         # Blit the maze background
-        for y_coordinate in range(Const.MAZE_MIN_HEIGHT, Const.MAZE_HEIGHT):
-            for x_coordinate in range(Const.MAZE_MIN_WIDTH, Const.MAZE_WIDTH):
+        for y_coordinate in range(const.MAZE_MIN_HEIGHT, const.MAZE_HEIGHT):
+            for x_coordinate in range(const.MAZE_MIN_WIDTH, const.MAZE_WIDTH):
                 position = self.translate((x_coordinate, y_coordinate))
-                if Maze.zones[x_coordinate, y_coordinate] == Const.MAZE_WALL:
+                if Maze.zones[x_coordinate, y_coordinate] == const.MAZE_WALL:
                     self.maze_panel.blit(maze.wall_image, position)
                 else:
                     self.maze_panel.blit(maze.path_image, position)
@@ -170,7 +168,9 @@ class PgInterface:
 
     def blit_backpack_bar(self, backpack):
         '''
+
         Blits the backpack bar with all MacGyver's carryed items images.
+
             Args:
                 backpack (list [items.Items]):
                 The list of items to blit their images.
@@ -186,6 +186,7 @@ class PgInterface:
 
     def blit_log_bar(self, message):
         '''
+
         Blits the log bar with a message.
 
             Args:
@@ -201,6 +202,7 @@ class PgInterface:
     def _blit_ending(self, text, y_position, font,
                      color=pygame.Color("white")):
         '''
+
         Blits the maze panel with horizontally centered multi-line text.
            Automatic line feed is not supported.
 
@@ -227,6 +229,7 @@ class PgInterface:
 
     def blit_ending_screen(self, ending, message):
         '''
+
         Darken and blits the maze panel with the ending text followed by a
         message with different colors.
 
@@ -246,6 +249,7 @@ class PgInterface:
     @staticmethod
     def redden(image):
         '''
+
         Redden and return a surface.
             Args:
                 image (pygame.Surface) : The image to be redden.

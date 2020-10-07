@@ -8,6 +8,8 @@ Classes:
     Escape: The Escape object runs the game.
 
 Methods:
+    fullscreen(): Returns the pygame flag for the selected fullscreen or
+        windowed mode.
     command(key): Returns the command corresponding to the keyboard key
         pressed by the player.
     destination(command): Returns the coordinates of the destination
@@ -25,13 +27,13 @@ Methods:
 
 import pygame
 
-from const import Const
-from maze import Maze
-from macgyver import MacGyver
-from guardian import Guardian
-from items import Items
-from cliinterface import CliInterface
-from pginterface import PgInterface
+import config.settings as settings
+from app.maze import Maze
+from app.macgyver import MacGyver
+from app.guardian import Guardian
+from app.items import Items
+from app.clidisplay  import CliDisplay 
+from app.pginterface import PgInterface
 
 
 class Escape:
@@ -58,10 +60,10 @@ class Escape:
         # Initialize Pygame
         pygame.init()
         # Initialize display
-        self.screen = pygame.display.set_mode((Const.SCREEN_WIDTH,
-                                              Const.SCREEN_HEIGHT),
-                                              Const.FULLSCREEN)
-        pygame.display.set_caption(Const.CAPTION)
+        self.screen = pygame.display.set_mode((settings.SCREEN_WIDTH,
+                                              settings.SCREEN_HEIGHT),
+                                              Escape.fullscreen())
+        pygame.display.set_caption(settings.CAPTION)
         # Initialize Pygame interface
         self.pgi = PgInterface()
         # Initialize game
@@ -70,6 +72,23 @@ class Escape:
         self.macgyver = MacGyver((self.pgi.tile_side, self.pgi.tile_side))
         self.guardian = Guardian((self.pgi.tile_side, self.pgi.tile_side))
         self.items = Items((self.pgi.tile_side, self.pgi.tile_side))
+
+    @staticmethod
+    def fullscreen():
+        '''
+
+        Returns the pygame flag for the selected fullscreen or windowed mode.
+
+            Returns:
+                fullscreen (int):
+                If fullscreen mode is selected, returns the pygame fullscreen
+                flag. If windowed mode is selected, returns 0.
+        '''
+        if settings.FULLSCREEN:
+            fullscreen = pygame.FULLSCREEN
+        else:
+            fullscreen = 0
+        return fullscreen
 
     @staticmethod
     def command(key):
@@ -185,6 +204,7 @@ class Escape:
 
     def update_ending_screen(self, ending, message):
         '''
+
         Updates the ending screen.
 
         This method clears the log bar and updates the maze panel as
@@ -211,12 +231,13 @@ class Escape:
         self.dirty_rects.append(self.pgi.maze_rect)
 
     def display_dirty_rects(self):
-        """display all the altered parts of the screen."""
+        '''Display all the altered parts of the screen.'''
         pygame.display.update(self.dirty_rects)
         self.dirty_rects.clear()
 
     def move(self, destination):
         '''
+
         Moves MacGyver to destination and perform his actions.
 
         This method moves Macgyver to his destination.
@@ -254,33 +275,34 @@ class Escape:
             else:
                 self.game_status = "game lost"
         self.update_sprite(origin, destination)
-        if Const.CLI_INTERFACE:
-            CliInterface.print_interface(self.macgyver.position,
+        if settings.CLI_DISPLAY:
+            CliDisplay .print_interface(self.macgyver.position,
                                          self.items.items_in_backpack)
         if self.game_status in ["game won", "game lost"]:
-            ending = Const.ENDINGS[self.game_status]
+            ending = settings.ENDINGS[self.game_status]
             message = "Press SPACE bar or ESCAPE to quit."
             self.update_ending_screen(ending, message)
-            if Const.CLI_INTERFACE:
-                CliInterface.print_ending(Const.CAPTION,
-                                          Const.ENDINGS[self.game_status])
+            if settings.CLI_DISPLAY:
+                CliDisplay .print_ending(settings.CAPTION,
+                                          settings.ENDINGS[self.game_status])
 
     def run(self):
         '''
+
         Runs the game.
 
         This method displays the labyrinth and print the command line
         interface if needed. An event loop is then processed until game is
         over or canceled. On a keydown event, the key pressed gives a command
         who is processed. If the player tries to move and there is no
-        collision detected, MacGyver moves to his destination. At last, all
+        collision detected, MacGyver moves to his destination. Finally, all
         the altered parts of the screen are displayed.
 
         '''
         # Display all the maze and all the sprites
         self.display_maze_panel()
-        if Const.CLI_INTERFACE:
-            CliInterface.print_interface(self.macgyver.position,
+        if settings.CLI_DISPLAY:
+            CliDisplay .print_interface(self.macgyver.position,
                                          self.items.items_in_backpack)
         # Event loop
         while self.game_status not in ["game canceled", "game over"]:
@@ -303,11 +325,6 @@ class Escape:
                             self.move(destination)
                             # Display all the altered parts of the screen
                             self.display_dirty_rects()
-        if Const.CLI_INTERFACE and self.game_status == "game canceled":
-            CliInterface.print_ending(Const.CAPTION,
-                                      Const.ENDINGS[self.game_status])
-
-
-if __name__ == "__main__":
-    escape = Escape()
-    escape.run()
+        if settings.CLI_DISPLAY and self.game_status == "game canceled":
+            CliDisplay .print_ending(settings.CAPTION,
+                                      settings.ENDINGS[self.game_status])

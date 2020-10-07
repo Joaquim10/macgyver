@@ -11,9 +11,9 @@ Methods:
     move(position): Moves MacGyver in the labyrinth.
 """
 
-from const import Const
-from maze import Maze
-from pgimage import PgImage
+from config.const import MAZE_START
+from app.maze import Maze
+from app.pgimage import PgImage
 
 
 class MacGyver():
@@ -30,7 +30,7 @@ class MacGyver():
         image (pygame.Surface): Image of MacGyver.
     """
     def __init__(self, image_size):
-        self.position = Maze.location(Const.MAZE_START)
+        self.position = Maze.location(MAZE_START)
         self.image = PgImage.load("MacGyver.png", image_size)
 
     def move(self, position):

@@ -16,8 +16,8 @@ Methods:
 
 import random
 
-from item import Item
-from maze import Maze
+from app.item import Item
+from app.maze import Maze
 
 
 class Items:
@@ -48,7 +48,7 @@ class Items:
 
     @staticmethod
     def _syringe(image_size):
-        """Initialize and return the syringe item."""
+        '''Initialize and return the syringe item.'''
         crafts = {
             "syringe": {
                 "name": "syringe",
@@ -61,13 +61,13 @@ class Items:
         return Item(**crafts["syringe"])
 
     def _drop(self, image_size):
-        """
+        '''
 
         Drop the items on random free paths.
 
         This method initializes the items and the free paths list and updates
         the materials and free paths list.
-        """
+        '''
         materials = {
             "needle": {
                 "name": "needle",
@@ -117,11 +117,11 @@ class Items:
     def craft(self):
         '''
 
-        Add the syringe to MacGyver's backpack and destroy other items.
+        Adds the syringe to MacGyver's backpack and destroy other items.
 
-        This method updating the qualities
-        of others items in MacGyver's backpack resetting the items in
-        MacGyver's backpack counter to 0.
+        This method adds the syringe to MacGyver's backpack updating the
+        qualities of others items in MacGyver's backpack and resetting the
+        items in MacGyver's backpack counter to 0.
         '''
         for item in self.backpack:
             if item.quality == "material":

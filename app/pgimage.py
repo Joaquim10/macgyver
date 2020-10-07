@@ -5,7 +5,7 @@
 pgimage: pgimage contains the class PgImage.
 
 Classes:
-    PgImage: PgImage loads from file, scales, crops and converts images.
+    PgImage: PgImage handles with images.
 
 Methods:
     load(image_file, scale_size):
@@ -16,21 +16,16 @@ Methods:
             convert and returns the corresponding Surface object.
 """
 
-import os
 import sys
 
 import pygame
 
-from const import Const
+from config.const import RESSOURCES_DIR
+from app.tools import Tools
 
 
 class PgImage:
-    """PgImage loads from file, scales, crops and converts images."""
-    @staticmethod
-    def _full_name(file_name):
-        '''Returns the full name of a file name.'''
-        working_directory = os.path.dirname(__file__)
-        return os.path.join(working_directory, Const.RESSOURCE_DIR, file_name)
+    """PgImage handles with images."""
 
     @staticmethod
     def _load(image_file):
@@ -56,6 +51,7 @@ class PgImage:
     @classmethod
     def load(cls, image_file, scale_size):
         '''
+
         Gets the full name of an image file name and loads, scales, convert
         and returns the corresponding Surface object.
 
@@ -68,7 +64,7 @@ class PgImage:
                 image (pygame.Surface)
                 The loaded from file, scaled and converted Surface object.
         '''
-        image_file = cls._full_name(image_file)
+        image_file = Tools.full_name(RESSOURCES_DIR, image_file)
         image = cls._load(image_file)
         image = cls._scale(image, scale_size)
         return image
@@ -76,6 +72,7 @@ class PgImage:
     @classmethod
     def load_crop(cls, image_file, crop_position, crop_size, scale_size):
         '''
+
         Gets the full name of an image file name and loads, crops, scales,
         convert and returns the corresponding Surface object.
 
@@ -92,7 +89,7 @@ class PgImage:
                 The loaded from file, croped, scaled and converted Surface
                 object.
         '''
-        image_file = cls._full_name(image_file)
+        image_file = Tools.full_name(RESSOURCES_DIR, image_file)
         crop_x, crop_y = crop_position
         crop_width, crop_height = crop_size
         crop_rect = crop_x * crop_width, crop_y * crop_height, \
