@@ -28,11 +28,13 @@ Methods:
 import pygame
 
 import config.settings as settings
+import config.const as const
 from app.maze import Maze
 from app.macgyver import MacGyver
 from app.guardian import Guardian
 from app.items import Items
-from app.clidisplay  import CliDisplay 
+from app.clidisplay import CliDisplay
+from app.pgimage import PgImage
 from app.pginterface import PgInterface
 
 
@@ -49,6 +51,8 @@ class Escape:
         screen (pygame.Surface): The display Surface.
         pgi (pginterface.PgInterface): The Pygame interface.
         game_status (str): The status of the game.
+            {"game in progress", "game won", "game lost", "game over",
+             "game canceled"}
         maze (maze.Maze): Represents the labyrinth.
         macgyver (macgyver.MacGyver): Represents MacGyver.
         guardian (guardian.Guardian): Represents the Guardian.
@@ -68,10 +72,23 @@ class Escape:
         self.pgi = PgInterface()
         # Initialize game
         self.game_status = "game in progress"
-        self.maze = Maze((self.pgi.tile_side, self.pgi.tile_side))
-        self.macgyver = MacGyver((self.pgi.tile_side, self.pgi.tile_side))
-        self.guardian = Guardian((self.pgi.tile_side, self.pgi.tile_side))
-        self.items = Items((self.pgi.tile_side, self.pgi.tile_side))
+        tile_size = self.pgi.tile_side, self.pgi.tile_side
+        wall_image = PgImage.load_crop(const.TEXTURE_ATLAS,
+                                       const.CROP_WALL_POSITION,
+                                       const.CROP_SIZE,
+                                       tile_size)
+        path_image = PgImage.load_crop(const.TEXTURE_ATLAS,
+                                       const.CROP_PATH_POSITION,
+                                       const.CROP_SIZE,
+                                       tile_size)
+        self.maze = Maze(wall_image, path_image)
+        location = self.maze.location(const.MAZE_START)
+        image = PgImage.load(const.MACGYVER_FILE, tile_size)
+        self.macgyver = MacGyver(location, image)
+        location = self.maze.location(const.MAZE_EXIT)
+        image = PgImage.load(const.GUARDIAN_FILE, tile_size)
+        self.guardian = Guardian(location, image)
+        self.items = Items(self.maze.free_paths(), tile_size)
 
     @staticmethod
     def fullscreen():
@@ -185,7 +202,7 @@ class Escape:
 
     def update_backpack_bar(self):
         '''Update the backpack bar and the dirty rects.'''
-        self.pgi.blit_backpack_bar(Items.backpack)
+        self.pgi.blit_backpack_bar(self.items.backpack)
         self.screen.blit(self.pgi.backpack_bar, self.pgi.backpack_rect)
         self.dirty_rects.append(self.pgi.backpack_rect)
 
@@ -256,12 +273,12 @@ class Escape:
         '''
         origin = self.macgyver.position
         self.macgyver.move(destination)
-        for item in Items.materials:
+        for item in self.items.materials:
             if destination == item.position:
                 self.items.pick_up(item)
                 if self.items.items_in_backpack >= 3:
-                    for material in Items.backpack:
-                        material.image = self.pgi.redden(material.image)
+                    for material in self.items.backpack:
+                        material.image = PgImage.redden(material.image)
                     self.items.craft()
                     message = "MacGyver got {} and crafted {}.".format(
                         item.description, self.items.syringe.description)
@@ -270,21 +287,23 @@ class Escape:
                 self.update_log_bar(message)
                 self.update_backpack_bar()
         if destination == self.guardian.position:
-            if self.items.syringe in Items.backpack:
+            if self.items.syringe in self.items.backpack:
                 self.game_status = "game won"
             else:
                 self.game_status = "game lost"
         self.update_sprite(origin, destination)
         if settings.CLI_DISPLAY:
-            CliDisplay .print_interface(self.macgyver.position,
-                                         self.items.items_in_backpack)
+            CliDisplay .print_interface(self.maze.zones,
+                                        self.macgyver.position,
+                                        self.items.backpack,
+                                        self.items.materials)
         if self.game_status in ["game won", "game lost"]:
             ending = settings.ENDINGS[self.game_status]
             message = "Press SPACE bar or ESCAPE to quit."
             self.update_ending_screen(ending, message)
             if settings.CLI_DISPLAY:
                 CliDisplay .print_ending(settings.CAPTION,
-                                          settings.ENDINGS[self.game_status])
+                                         settings.ENDINGS[self.game_status])
 
     def run(self):
         '''
@@ -302,8 +321,10 @@ class Escape:
         # Display all the maze and all the sprites
         self.display_maze_panel()
         if settings.CLI_DISPLAY:
-            CliDisplay .print_interface(self.macgyver.position,
-                                         self.items.items_in_backpack)
+            CliDisplay .print_interface(self.maze.zones,
+                                        self.macgyver.position,
+                                        self.items.backpack,
+                                        self.items.materials)
         # Event loop
         while self.game_status not in ["game canceled", "game over"]:
             for event in pygame.event.get():
@@ -327,4 +348,4 @@ class Escape:
                             self.display_dirty_rects()
         if settings.CLI_DISPLAY and self.game_status == "game canceled":
             CliDisplay .print_ending(settings.CAPTION,
-                                      settings.ENDINGS[self.game_status])
+                                     settings.ENDINGS[self.game_status])

@@ -14,6 +14,8 @@ Methods:
     load_crop(image_file, crop_position, crop_size, scale_size):
         Gets the full name of an image file name and loads, crops, scales,
             convert and returns the corresponding Surface object.
+    redden(image):
+        Redden and return a surface.
 """
 
 import sys
@@ -78,8 +80,8 @@ class PgImage:
 
             Args:
                 image_file (str): The image file name.
-                crop_position (tuples): The row and column of the crop.
-                    The row and column have a minimum of 0.
+                crop_position (tuples): The column and row of the crop.
+                    The column and row have a minimum of 0.
                 crop_size (tuples): The width and height of the crop.
                 scale_size (tuples): The width and height for scaling the
                     image.
@@ -90,11 +92,25 @@ class PgImage:
                 object.
         '''
         image_file = Tools.full_name(RESSOURCES_DIR, image_file)
-        crop_x, crop_y = crop_position
-        crop_width, crop_height = crop_size
-        crop_rect = crop_x * crop_width, crop_y * crop_height, \
-            crop_width, crop_height
+        column, row = crop_position
+        width, height = crop_size
+        crop_rect = column * width, row * height, width, height
         image = cls._load(image_file)
         image = image.subsurface(crop_rect)
         image = cls._scale(image, scale_size)
+        return image
+
+    @staticmethod
+    def redden(image):
+        '''
+
+        Redden and return a surface.
+            Args:
+                image (pygame.Surface) : The image to be redden.
+
+            Returns:
+                image (pygame.Surface)
+                The reddened image.
+        '''
+        image.fill(pygame.Color("cyan"), None, pygame.BLEND_SUB)
         return image

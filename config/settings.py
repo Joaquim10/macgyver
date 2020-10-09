@@ -2,32 +2,35 @@
 # -*- coding: UTF-8 -*-
 """settings contains the settings definitions"""
 
-# The size of the screen, in pixels
+# Width and height of the screen, in pixels
 SCREEN_WIDTH, SCREEN_HEIGHT = 1440, 900
 
 # If FULLSCREEN is set to True, the game will be displayed in fullscreen mode.
 # If FULLSCREEN is set to False, the game will be displayed in windowed mode.
 FULLSCREEN = False
 
-# If CLI_DISPLAY is set to True, the display of the game in the console is activated.
-# If CLI_DISPLAY is set to False, the display in the console is disabled.
+# If CLI_DISPLAY is set to True, the display of the game in the console is
+# activated.
+# If CLI_DISPLAY is set to False, the display of the game in the console is
+# disabled.
 CLI_DISPLAY = True
 
 # The maze structure is stored in a text file.
 # It's a grid of 15 characters width and 15 characters height.
-# Notation:
-# '#' for walls.
-# ' ' blank spaces for paths.
+# Structures notation in the text file:
+# '#' for walls. The wall tiles blocks MacGyver.
+# ' ' blank spaces for paths. MacGyver can move on the paths tiles.
 # '?' for the player's starting position.
-# '!' for the exit of the labyrinth.
+# '!' for the exit of the labyrinth and the location of the guard.
 MAZE_FILE = "maze.txt"
 
-# The caption is displayed in windowed mode.
+# The caption is displayed in windowed mode, and in the ending screen in the
+# console if CLI_DISPLAY is enabled.
 CAPTION = "MagGyver - Escape the labyrinth"
 
-# End of game display.
+# Ending screen.
 # This is the ending texts when game is won, lost and canceled.
-# The game canceled text appears only on the console when CLI_DISPLAY is
+# The game canceled text appears only in the console when CLI_DISPLAY is
 # enabled.
 ENDINGS = {
     "game won":

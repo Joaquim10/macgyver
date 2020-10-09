@@ -16,8 +16,9 @@ Methods:
 
 import random
 
+import config.const as const
 from app.item import Item
-from app.maze import Maze
+from app.pgimage import PgImage
 
 
 class Items:
@@ -28,37 +29,29 @@ class Items:
     Args:
         image_size(tuples): Width and height for the images of the items.
 
-    Class attributes:
-        free_paths (list [tuples]): Coordinates of the free paths.
+    Attributes:
         materials (list [items.Items]): Items dropped across the maze.
         backpack (list [items.Items]): Items in MacGyver's backpack.
-
-    Attributes:
         items_in_backpack (int): Counter for items in MacGyver's backpack.
+        free_paths (list [tuples]): Coordinates of the free paths.
         syringe (item.Item): syringue item.
     """
-    free_paths = []
-    materials = []
-    backpack = []
-
-    def __init__(self, image_size):
+    def __init__(self, free_paths, image_size):
+        self.materials = []
+        self.backpack = []
         self.items_in_backpack = 0
+        self.free_paths = free_paths
         self.syringe = self._syringe(image_size)
         self._drop(image_size)
 
     @staticmethod
     def _syringe(image_size):
         '''Initialize and return the syringe item.'''
-        crafts = {
-            "syringe": {
-                "name": "syringe",
-                "description": "an epidermic syringe",
-                "image_file": "seringue.png",
-                "quality": "craft"
-            }
-        }
-        crafts["syringe"].update({"image_size": image_size})
-        return Item(**crafts["syringe"])
+        crafts = const.CRAFTS.copy()
+        image = PgImage.load(crafts["syringe"]["image_file"], image_size)
+        crafts["syringe"].pop("image_file")
+        crafts["syringe"].update({"image": image})
+        return Item(crafts["syringe"])
 
     def _drop(self, image_size):
         '''
@@ -68,32 +61,14 @@ class Items:
         This method initializes the items and the free paths list and updates
         the materials and free paths list.
         '''
-        materials = {
-            "needle": {
-                "name": "needle",
-                "description": "a needle",
-                "image_file": "aiguille.png",
-                "quality": "material"
-            },
-            "tube": {
-                "name": "tube",
-                "description": "a little plastic tube",
-                "image_file": "tube_plastique.png",
-                "quality": "material"
-            },
-            "ether": {
-                "name": "ether",
-                "description": "some ether",
-                "image_file": "ether.png",
-                "quality": "material"
-            }
-        }
-        self.free_paths = Maze.free_paths()
+        materials = const.MATERIALS.copy()
         for material in materials:
             location = random.choice(self.free_paths)
-            kwargs = {"position": location, "image_size": image_size}
+            image = PgImage.load(materials[material]["image_file"], image_size)
+            materials[material].pop("image_file")
+            kwargs = {"position": location, "image": image}
             materials[material].update(kwargs)
-            item = Item(**materials[material])
+            item = Item(materials[material])
             self.materials.append(item)
             self.free_paths.remove(location)
 

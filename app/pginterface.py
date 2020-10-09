@@ -26,15 +26,12 @@ Methods:
     blit_ending_screen(ending, message):
         Darken and blits the maze panel with the ending text followed by a
         message with different colors.
-    redden(image):
-        Redden and return a surface.
 """
 
 import pygame
 
 import config.settings as settings
 import config.const as const
-from app.maze import Maze
 
 
 class PgInterface:
@@ -156,7 +153,7 @@ class PgInterface:
         for y_coordinate in range(const.MAZE_MIN_HEIGHT, const.MAZE_HEIGHT):
             for x_coordinate in range(const.MAZE_MIN_WIDTH, const.MAZE_WIDTH):
                 position = self.translate((x_coordinate, y_coordinate))
-                if Maze.zones[x_coordinate, y_coordinate] == const.MAZE_WALL:
+                if maze.zones[x_coordinate, y_coordinate] == const.MAZE_WALL:
                     self.maze_panel.blit(maze.wall_image, position)
                 else:
                     self.maze_panel.blit(maze.path_image, position)
@@ -245,18 +242,3 @@ class PgInterface:
                                           pygame.Color("white"))
         text_position = self._blit_ending(message, text_position, font,
                                           pygame.Color("orange"))
-
-    @staticmethod
-    def redden(image):
-        '''
-
-        Redden and return a surface.
-            Args:
-                image (pygame.Surface) : The image to be redden.
-
-            Returns:
-                image (pygame.Surface)
-                The reddened image.
-        '''
-        image.fill(pygame.Color("cyan"), None, pygame.BLEND_SUB)
-        return image

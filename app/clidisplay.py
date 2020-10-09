@@ -7,7 +7,7 @@ clidisplay : clidisplay contains the class CliDisplay .
 Classes:
     CliDisplay : The CliDisplay  prints the game interface on the console.
 Methods:
-    print_interface(macgyver_position, items_in_backpack):
+    print_interface(zones, macgyver_position, backpack, materials):
         Prints the game interface on the console.
     print_ending(cls, caption, ending, length=40):
         Print centered caption and ending text.
@@ -16,12 +16,10 @@ Methods:
 import os
 
 import config.const as const
-from app.maze import Maze
-from app.items import Items
 
 
-class CliDisplay :
-    """The CliDisplay  prints the game interface on the console"""
+class CliDisplay:
+    """The CliDisplay prints the game interface on the console"""
 
     @staticmethod
     def _clear_console():
@@ -39,59 +37,64 @@ class CliDisplay :
         print("~" * length)
 
     @classmethod
-    def print_interface(cls, macgyver_position, items_in_backpack):
+    def print_interface(cls, zones, macgyver_position, backpack, materials):
         '''
 
         Prints the game interface on the command line interface.
 
         Clears the console and prints all the maze structures, the characters
-        and the dropped items. Then prints the number of items carryed by
-        MacGyver and justifyed carryed items and quality followed by a
-        separator.
+        and the dropped items. Then prints justifyed carryed items name and
+        quality followed by a separator.
 
             Args:
-                caption (str): The text to be printed first.
-                ending (str): The text to be printed after the caption.
-                length (int, optional): The length is used to center the text
-                    and print separators. By default, length is 40.
+                zones (dict [tuples, str]):
+                    Dictionnary of the zones in the labyrinth.
+                macgyver_position (tuples):
+                    MacGyver's position in the labyrinth.
+                backpack (list [Item]):
+                    List of items got by MacGyver.
+                materials (list [Item]):
+                    List of items dropped in the labyrinth.
+
         '''
         cls._clear_console()
-        items_header = "Backpack - {} item(s):".format(items_in_backpack)
-        length = len(items_header)
+        length = 40
+        margin = 10
         # Draw maze
         for y_coordinate in range(const.MAZE_MIN_HEIGHT, const.MAZE_HEIGHT):
             line = ""
             for x_coordinate in range(const.MAZE_MIN_WIDTH, const.MAZE_WIDTH):
                 # Structures
-                if (Maze.zones[x_coordinate, y_coordinate] ==
+                if (zones[x_coordinate, y_coordinate] ==
                         const.MAZE_WALL):
                     char = "#"
-                elif (Maze.zones[x_coordinate, y_coordinate] ==
+                elif (zones[x_coordinate, y_coordinate] ==
                       const.MAZE_PATH):
                     char = " "
-                elif (Maze.zones[x_coordinate, y_coordinate] ==
+                elif (zones[x_coordinate, y_coordinate] ==
                       const.MAZE_START):
                     char = "?"
-                elif (Maze.zones[x_coordinate, y_coordinate] ==
+                elif (zones[x_coordinate, y_coordinate] ==
                       const.MAZE_EXIT):
                     char = "!"
                 # Special locations
                 if (x_coordinate, y_coordinate) == macgyver_position:
                     char = "@"
                 else:
-                    for item in Items.materials:
+                    for item in materials:
                         if item.position == (x_coordinate, y_coordinate):
                             char = "$"
                 line += char
             print(line.center(length))
         cls._print_separator(length)
-        # Print items counter and items in backpack
-        print(items_header)
-        for item in Items.backpack:
+        # Print items in backpack
+        left_margin = " " * margin
+        print("{}{}".format(left_margin, "Backpack :"))
+        for item in backpack:
             left_column = "-{}".format(item.name.capitalize())
             right_column = "[{}]".format(item.quality).rjust(
-                length - len(left_column) - 1)
-            print("{}{}".format(left_column, right_column))
+                length - len(left_column) - margin * 2)
+            print("{}{}{}".format(left_margin, left_column, right_column))
         cls._print_separator(length)
 
     @classmethod

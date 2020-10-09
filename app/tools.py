@@ -16,10 +16,8 @@ import os
 
 
 class Tools:
-    """
+    """Tools contains some tools."""
 
-    Tools contains some tools.
-    """
     @staticmethod
     def full_name(directory, file_name):
         '''
