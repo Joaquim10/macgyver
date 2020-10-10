@@ -125,14 +125,16 @@ class Maze:
                 labyrinth.
 
             Returns:
-                collision_detected (bool)
+                collision (bool)
                 Retuns True if the specified location is a wall or if the
                 coordinates are out of the labyrinth.
                 Returns False for any other case.
         '''
         x_coordinate, y_coordinate = location
-        return self.zones[location] == const.MAZE_WALL or \
-            x_coordinate < const.MAZE_MIN_WIDTH or \
+        collision = x_coordinate < const.MAZE_MIN_WIDTH or \
             x_coordinate > const.MAZE_WIDTH - 1 or \
             y_coordinate < const.MAZE_MIN_HEIGHT or \
             y_coordinate > const.MAZE_HEIGHT - 1
+        if not collision:
+            collision = self.zones[location] == const.MAZE_WALL
+        return collision
