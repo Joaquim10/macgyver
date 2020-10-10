@@ -11,7 +11,7 @@ MacGyver is locked in a labyrinth and have to escape. A guard is watching over t
 
 * A PC with any OS installed in it. This game is standalone. It can be runned on any computer.
 
-* Python 3.7, which can be downloaded from https://www.python.org/downloads/
+* Python 3, which can be downloaded from https://www.python.org/downloads/
 
 
 ## Installation
@@ -58,22 +58,33 @@ An alternative is to `download zip` from https://github.com/Joaquim10/macgyver b
 
 ## Setup
 
-The tile set grid is stored in the maze.txt file in the config directory.
-The tile set grid must be 15 tiles wide and 15 tiles height.
+### The tile set grid
 
-Tile set notation:
-* '#' for walls.
-* ' ' blank spaces for paths.
-* '?' for the player's starting position.
-* '!' for the exit of the labyrinth.
+The maze structure loaded in the game is stored in a text file in the `mazes` directory. By default, this file is `maze.txt`.
+It's a grid of 15 characters width and 15 characters height.
 
-## Game launch and controls
+Structures notation in the text file:
+
+* `#` for walls. The wall tiles blocks MacGyver.
+* ` ` blank spaces for paths. MacGyver can move on the paths tiles.
+* `?` for the player's starting position.
+* `!` for the exit of the labyrinth and the location of the guard.
+
+### settings
+The settings are stored in the `settings.py` file in the `config` directory.
+
+## Game launch
 
 * Run the game by typing:
 
-            python3 escape.py
+            python3 main.py
+
+## controls
 
 * Use the keyboard arrow keys to move.
 
 * Walk on items to get them.
+
+## 
+
 
