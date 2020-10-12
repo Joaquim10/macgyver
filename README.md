@@ -67,8 +67,8 @@ Structures notation in the text file:
 
 * `#` for walls. The wall tiles blocks MacGyver.
 * ` ` blank spaces for paths. MacGyver can move on the paths tiles.
-* `?` for the player's starting position.
-* `!` for the exit of the labyrinth and the location of the guard.
+* `!` for the player's starting position.
+* `?` for the exit of the labyrinth and the location of the guard.
 
 ### settings
 The settings are stored in the `settings.py` file in the `config` directory.
@@ -83,8 +83,11 @@ The settings are stored in the `settings.py` file in the `config` directory.
 
 * Use the keyboard arrow keys to move.
 
-* Walk on items to get them.
+* Walk on items to get them and walk to the guardian to exit the labyrinth.
 
-## 
+* Press `ESCAPE` to quit the game.
+
+* Press the `SPACE` bar when required to validate the end screen.
+ 
 
 

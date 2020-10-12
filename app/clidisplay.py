@@ -67,16 +67,13 @@ class CliDisplay:
                 # Structures
                 if (zones[x_coordinate, y_coordinate] ==
                         const.MAZE_WALL):
-                    char = "#"
-                elif (zones[x_coordinate, y_coordinate] ==
-                      const.MAZE_PATH):
-                    char = " "
-                elif (zones[x_coordinate, y_coordinate] ==
-                      const.MAZE_START):
-                    char = "?"
+                    char = const.STRUCTURES[const.MAZE_WALL]
+                elif (zones[x_coordinate, y_coordinate] in
+                      [const.MAZE_PATH, const.MAZE_START]):
+                    char = const.STRUCTURES[const.MAZE_PATH]
                 elif (zones[x_coordinate, y_coordinate] ==
                       const.MAZE_EXIT):
-                    char = "!"
+                    char = const.STRUCTURES[const.MAZE_EXIT]
                 # Special locations
                 if (x_coordinate, y_coordinate) == macgyver_position:
                     char = "@"

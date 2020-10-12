@@ -25,8 +25,8 @@ MAZE_EXIT = "Guardian"
 STRUCTURES = {
     MAZE_WALL: "#",
     MAZE_PATH: " ",
-    MAZE_START: "?",
-    MAZE_EXIT: "!"
+    MAZE_START: "!",
+    MAZE_EXIT: "?"
 }
 
 
