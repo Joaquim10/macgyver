@@ -101,5 +101,6 @@ class Items:
         for item in self.backpack:
             if item.quality == "material":
                 item.quality = "destroyed"
+                item.image = PgImage.redden(item.image)
         self.items_in_backpack = 0
         self.pick_up(self.syringe)

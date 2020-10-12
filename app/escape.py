@@ -277,8 +277,6 @@ class Escape:
             if destination == item.position:
                 self.items.pick_up(item)
                 if self.items.items_in_backpack >= 3:
-                    for material in self.items.backpack:
-                        material.image = PgImage.redden(material.image)
                     self.items.craft()
                     message = "MacGyver got {} and crafted {}.".format(
                         item.description, self.items.syringe.description)
